@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Погодный Напоминатель</string>
+    <string name="send_forecast">Отправить прогноз</string>
+    <string name="t_c">t °C</string>
+    <string name="wind">ветер</string>
+    <string name="pressure">давление</string>
+    <string name="humidity">влажность</string>
+    <string name="temperature">temperature</string>
+    <string name="city">Город</string>
+    <string name="enter_city_name">Введите название города</string>
+    <string name="send_forecast_in_sms">Отправить прогноз в СМС</string>
 </resources>

@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">ViraWeatherReminder</string>
+    <string name="send_forecast">Send forecast</string>
+    <string name="t_c">t °C</string>
+    <string name="wind">wind</string>
+    <string name="pressure">pressure</string>
+    <string name="humidity">humidity</string>
+    <string name="temperature">temperature</string>
+    <string name="city">City</string>
+    <string name="enter_city_name">Enter city name</string>
+    <string name="send_forecast_in_sms">Send forecast in SMS</string>
 </resources>

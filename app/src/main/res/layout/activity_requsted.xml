@@ -13,7 +13,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:text="City"
+        android:text="@string/city"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,11 +26,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="temperature"
+        android:text="@string/temperature"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/tvTownName" />
 
     <TextView
@@ -39,10 +37,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="wind"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/wind"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/tvTemperature" />
 
     <TextView
@@ -51,10 +47,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="pressure"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/pressure"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/tvWind" />
 
     <TextView
@@ -63,10 +57,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="humidity"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/humidity"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/tvPressure" />
 
     <Button
@@ -77,9 +69,57 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:onClick="onClickSend"
-        android:text="Отправить прогноз"
+        android:text="@string/send_forecast"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvHumidity" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        app:layout_constraintGuide_percent="0.5"
+        android:orientation="vertical" />
+
+    <TextView
+        android:id="@+id/tvTemperatureLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/t_c"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/tvTemperature"
+        app:layout_constraintTop_toBottomOf="@+id/tvTownName" />
+
+    <TextView
+        android:id="@+id/tvWindLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/wind"
+        app:layout_constraintEnd_toStartOf="@+id/tvWind"
+        app:layout_constraintTop_toBottomOf="@+id/tvTemperatureLabel" />
+
+    <TextView
+        android:id="@+id/tvPressureLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/pressure"
+        app:layout_constraintEnd_toStartOf="@+id/tvPressure"
+        app:layout_constraintTop_toBottomOf="@+id/tvWindLabel" />
+
+    <TextView
+        android:id="@+id/tvHumidityLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/humidity"
+        app:layout_constraintEnd_toStartOf="@+id/tvHumidity"
+        app:layout_constraintTop_toBottomOf="@+id/tvPressureLabel" />
 
 </android.support.constraint.ConstraintLayout>
