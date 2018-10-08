@@ -10,7 +10,7 @@ import android.widget.EditText;
 
 public class TwoActivityMain extends AppCompatActivity {
 
-    private static final String TAG = TwoActivityMain.class.getName();
+    private static final String TAG = TwoActivityMain.class.getSimpleName();
 
     private EditText editText;
     private CheckBox cbWind, cbPressure, cbHumidity, cbMessage;

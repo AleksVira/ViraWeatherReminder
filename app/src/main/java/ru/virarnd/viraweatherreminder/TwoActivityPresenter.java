@@ -2,7 +2,7 @@ package ru.virarnd.viraweatherreminder;
 
 import android.content.Intent;
 
-public class TwoActivityPresenter {
+class TwoActivityPresenter {
     final static String TEXT = "36I";
     final static String WIND_LBL = "74V7F41R";
     final static String PRESSURE_LBL = "X66";
@@ -12,14 +12,14 @@ public class TwoActivityPresenter {
     private static TwoActivityPresenter instance = null;
     private TwoActivityMain twoActivityMain;
 
-    public static TwoActivityPresenter getInstance() {
+    static TwoActivityPresenter getInstance() {
         if (instance == null) {
             instance = new TwoActivityPresenter();
         }
         return instance;
     }
 
-    public void sendRequestData(String townName, boolean windState, boolean pressureState, boolean humidityState, boolean messageState) {
+    void sendRequestData(String townName, boolean windState, boolean pressureState, boolean humidityState, boolean messageState) {
         Intent intent = new Intent(twoActivityMain, RequstedActivity.class);
         intent.putExtra(TEXT, townName);
         intent.putExtra(WIND_LBL, windState);
@@ -29,7 +29,7 @@ public class TwoActivityPresenter {
         twoActivityMain.startActivity(intent);
     }
 
-    public void setFirstActivity(TwoActivityMain parentActivity) {
+    void setFirstActivity(TwoActivityMain parentActivity) {
         this.twoActivityMain = parentActivity;
     }
 }
