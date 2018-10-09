@@ -15,6 +15,8 @@ public class TwoActivityMain extends AppCompatActivity {
     private EditText editText;
     private CheckBox cbWind, cbPressure, cbHumidity, cbMessage;
 
+    private TwoActivityPresenter presenter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +37,14 @@ public class TwoActivityMain extends AppCompatActivity {
         cbHumidity = findViewById(R.id.cbHumidity);
 
         cbMessage = findViewById(R.id.cbMessage);
-        final TwoActivityPresenter presenter = TwoActivityPresenter.getInstance();
+        presenter = TwoActivityPresenter.getInstance();
         presenter.setFirstActivity(this);
 
         editText.setOnKeyListener(new EditTextListener(this));
 
     }
 
-
-   private class EditTextListener implements View.OnKeyListener {
+    private class EditTextListener implements View.OnKeyListener {
         TwoActivityMain parentActivity;
 
         EditTextListener(TwoActivityMain twoActivityMain) {
