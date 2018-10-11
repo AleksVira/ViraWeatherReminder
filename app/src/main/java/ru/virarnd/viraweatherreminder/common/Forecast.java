@@ -1,6 +1,9 @@
 package ru.virarnd.viraweatherreminder.common;
 
-public class Forecast {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Forecast implements Parcelable {
     private final City city;
     private final int dayTemp;
     private final int nightTemp;
@@ -126,4 +129,43 @@ public class Forecast {
         this.weatherConditions = builder.weatherConditions;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.city, flags);
+        dest.writeInt(this.dayTemp);
+        dest.writeInt(this.nightTemp);
+        dest.writeInt(this.windDirection);
+        dest.writeInt(this.windSpeed);
+        dest.writeInt(this.humidity);
+        dest.writeDouble(this.pressure);
+        dest.writeInt(this.weatherConditions);
+    }
+
+    protected Forecast(Parcel in) {
+        this.city = in.readParcelable(City.class.getClassLoader());
+        this.dayTemp = in.readInt();
+        this.nightTemp = in.readInt();
+        this.windDirection = in.readInt();
+        this.windSpeed = in.readInt();
+        this.humidity = in.readInt();
+        this.pressure = in.readDouble();
+        this.weatherConditions = in.readInt();
+    }
+
+    public static final Parcelable.Creator<Forecast> CREATOR = new Parcelable.Creator<Forecast>() {
+        @Override
+        public Forecast createFromParcel(Parcel source) {
+            return new Forecast(source);
+        }
+
+        @Override
+        public Forecast[] newArray(int size) {
+            return new Forecast[size];
+        }
+    };
 }

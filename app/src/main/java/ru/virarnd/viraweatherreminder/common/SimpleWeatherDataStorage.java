@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 
-public class SimpleWeatherDataStorage {
+public class SimpleWeatherDataStorage implements WeatherDataRequester {
 
     private ArrayList<ArrayList<Forecast>> forecastData;
 
