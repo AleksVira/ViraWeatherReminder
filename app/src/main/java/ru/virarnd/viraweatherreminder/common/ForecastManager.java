@@ -3,7 +3,7 @@ package ru.virarnd.viraweatherreminder.common;
 import java.util.Stack;
 
 public class ForecastManager {
-    private WeatherDataRequester weatherDataRequester;
+    private final WeatherDataRequester weatherDataRequester;
     private Stack<String> lastUsedCities;                   // Стэк для хранения последних использованных городов, размер 5
 
     public ForecastManager() {

@@ -9,7 +9,7 @@ class WeatherPresenter {
 
     private static WeatherPresenter instance = null;
     private FirstActivity activity;
-    private Model model = new Model();
+    private final Model model = new Model();
 
     static WeatherPresenter getInstance() {
         if (instance == null) {

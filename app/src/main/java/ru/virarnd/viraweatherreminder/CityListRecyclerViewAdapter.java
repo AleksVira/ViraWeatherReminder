@@ -1,8 +1,5 @@
 package ru.virarnd.viraweatherreminder;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,7 +16,7 @@ public class CityListRecyclerViewAdapter extends RecyclerView.Adapter<CityListRe
 
     private final static String TAG = CityListRecyclerViewAdapter.class.getName();
 
-    private List<City> cities;
+    private final List<City> cities;
     private CityListFragment.OnFragmentInteractionListener mListener;
     private int row_index = -1;
 
@@ -68,7 +65,7 @@ public class CityListRecyclerViewAdapter extends RecyclerView.Adapter<CityListRe
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
+        final View mView;
         public final TextView mContentView;
         public City mItem;
 

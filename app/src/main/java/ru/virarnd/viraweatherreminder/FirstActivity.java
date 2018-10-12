@@ -68,7 +68,6 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
         forecastFragment.setArguments(bundle);
 
         if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
-//            getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, forecastFragment).addToBackStack("7GWDZ2C").commit();
             getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, forecastFragment).commit();
         } else {
             getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, forecastFragment).addToBackStack("E7LY3SBO").commit();

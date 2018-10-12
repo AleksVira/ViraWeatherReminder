@@ -2,12 +2,11 @@ package ru.virarnd.viraweatherreminder.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 
 public class SimpleWeatherDataStorage implements WeatherDataRequester {
 
-    private ArrayList<ArrayList<Forecast>> forecastData;
+    private final ArrayList<ArrayList<Forecast>> forecastData;
 
 
     public Forecast getCurrentForecast(int searchId) {

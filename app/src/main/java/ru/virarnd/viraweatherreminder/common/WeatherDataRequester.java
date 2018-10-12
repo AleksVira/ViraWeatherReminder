@@ -3,9 +3,9 @@ package ru.virarnd.viraweatherreminder.common;
 import java.util.ArrayList;
 import java.util.Date;
 
-public interface WeatherDataRequester {
+interface WeatherDataRequester {
 
-    public Forecast getCurrentForecast(int Id);
+    Forecast getCurrentForecast(int Id);
 
     public Forecast getForecastByDate(int Id, Date date);
 

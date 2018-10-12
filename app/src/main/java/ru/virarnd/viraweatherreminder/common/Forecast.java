@@ -59,7 +59,7 @@ public class Forecast implements Parcelable {
     }
 
     public static class Builder {
-        private City city;
+        private final City city;
         private int dayTemp;
         private int nightTemp;
         private int windDirection;
@@ -146,7 +146,7 @@ public class Forecast implements Parcelable {
         dest.writeInt(this.weatherConditions);
     }
 
-    protected Forecast(Parcel in) {
+    private Forecast(Parcel in) {
         this.city = in.readParcelable(City.class.getClassLoader());
         this.dayTemp = in.readInt();
         this.nightTemp = in.readInt();

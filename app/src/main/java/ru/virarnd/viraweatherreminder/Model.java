@@ -6,8 +6,8 @@ import ru.virarnd.viraweatherreminder.common.City;
 import ru.virarnd.viraweatherreminder.common.Forecast;
 import ru.virarnd.viraweatherreminder.common.ForecastManager;
 
-public class Model {
-    private ForecastManager forecastManager;
+class Model {
+    private final ForecastManager forecastManager;
 
     public Model() {
         this.forecastManager = new ForecastManager();
