@@ -2,16 +2,23 @@ package ru.virarnd.viraweatherreminder;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import ru.virarnd.viraweatherreminder.common.City;
+import ru.virarnd.viraweatherreminder.common.MyApp;
+import ru.virarnd.viraweatherreminder.common.Settings;
 
 import static ru.virarnd.viraweatherreminder.FirstActivity.PARCEL;
 
@@ -21,6 +28,37 @@ public class CityListFragment extends Fragment {
 
     private ArrayList<City> cityList;
     private OnFragmentInteractionListener mListener;
+    private boolean cbWindState;
+    private boolean cbPressureState;
+    private boolean cbHumidityState;
+    private String swTemperatureUnit;
+    private String swWindSpeedUnit;
+    private String swPressureSUnit;
+    private CheckBox cbWindSpeed;
+    private CheckBox cbPressure;
+    private SwitchCompat swWindSpeed;
+    private SwitchCompat swPressure;
+    private TextView tvWindSpeedUnitMs;
+    private TextView tvWindSpeedUnitMh;
+    private TextView tvPressureUnitMm;
+    private TextView tvPressureUnitMbar;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // TODO Добавить чтение в переменные сохраненного состояния Settings
+        // Пока считывать то, что есть по дефолту.
+
+        Settings settings = Settings.getInstance();
+        cbWindState = settings.isWindSpeedVisible();
+        cbPressureState = settings.isPressureVisible();
+        cbHumidityState = settings.isHumidityVisible();
+        swTemperatureUnit = settings.getTemperatureUnit();
+        swWindSpeedUnit = settings.getWindSpeedUnit();
+        swPressureSUnit = settings.getPressureUnit();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -29,21 +67,42 @@ public class CityListFragment extends Fragment {
         Bundle bundle = getArguments();
         cityList = bundle.getParcelableArrayList(PARCEL);
 
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new CityListRecyclerViewAdapter(cityList, mListener));
-        }
+        // Список городов
+        RecyclerView recyclerView = view.findViewById(R.id.list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        recyclerView.setAdapter(new CityListRecyclerViewAdapter(cityList, mListener));
+
+        // Настройки прогноза
+        cbWindSpeed = view.findViewById(R.id.cbWind);
+        cbPressure = view.findViewById(R.id.cbPressure);
+        CheckBox cbHumidity = view.findViewById(R.id.cbHumidity);
+        cbWindSpeed.setChecked(cbWindState);
+        cbPressure.setChecked(cbPressureState);
+        cbHumidity.setChecked(cbHumidityState);
+
+        SwitchCompat swTemp = view.findViewById(R.id.swTemp);
+        swWindSpeed = view.findViewById(R.id.swWind);
+        tvWindSpeedUnitMs = view.findViewById(R.id.tv_speed_ms);
+        tvWindSpeedUnitMh = view.findViewById(R.id.tv_temp_speed_miles_h);
+        swPressure = view.findViewById(R.id.swPressure);
+        tvPressureUnitMm = view.findViewById(R.id.tv_pressure_mm);
+        tvPressureUnitMbar = view.findViewById(R.id.tv_pressure_mb);
+        swTemp.setChecked(swTemperatureUnit.equals(MyApp.getAppContext().getString(R.string.fahrenheit)));
+        swWindSpeed.setChecked(swWindSpeedUnit.equals(MyApp.getAppContext().getString(R.string.speed_miles_hour)));
+        swPressure.setChecked(swPressureSUnit.equals(MyApp.getAppContext().getString(R.string.pressure_mb)));
+
+        // Каждому элементу настроек -- по слушателю
+        cbWindSpeed.setOnCheckedChangeListener(new CheckBoxAndSwitchListener());
+        cbPressure.setOnCheckedChangeListener(new CheckBoxAndSwitchListener());
+        cbHumidity.setOnCheckedChangeListener(new CheckBoxAndSwitchListener());
+        swTemp.setOnCheckedChangeListener(new CheckBoxAndSwitchListener());
+        swWindSpeed.setOnCheckedChangeListener(new CheckBoxAndSwitchListener());
+        swPressure.setOnCheckedChangeListener(new CheckBoxAndSwitchListener());
+
+        checkWindGroup();
+        checkPressureGroup();
 
         return view;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onCitySelected(int cityId) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(cityId);
-        }
     }
 
     @Override
@@ -65,5 +124,52 @@ public class CityListFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(int cityId);
+
+        void onCheckboxChanged(int buttonId, boolean isChecked);
+    }
+
+
+    private class CheckBoxAndSwitchListener implements CompoundButton.OnCheckedChangeListener {
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            // Если выключаются параметры wind и pressure, гасить единицы измерений рядом.
+            // Если включаются -- наоборот, активировать.
+            switch (buttonView.getId()) {
+                case R.id.cbWind:
+                    checkWindGroup();
+                    break;
+                case R.id.cbPressure:
+                    checkPressureGroup();
+                    break;
+                default:
+                    break;
+            }
+            mListener.onCheckboxChanged(buttonView.getId(), isChecked);
+        }
+    }
+
+    private void checkPressureGroup() {
+        if (!cbPressure.isChecked()) {
+            swPressure.setVisibility(View.INVISIBLE);
+            tvPressureUnitMm.setVisibility(View.INVISIBLE);
+            tvPressureUnitMbar.setVisibility(View.INVISIBLE);
+        } else {
+            swPressure.setVisibility(View.VISIBLE);
+            tvPressureUnitMm.setVisibility(View.VISIBLE);
+            tvPressureUnitMbar.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void checkWindGroup() {
+        if (!cbWindSpeed.isChecked()) {
+            swWindSpeed.setVisibility(View.INVISIBLE);
+            tvWindSpeedUnitMs.setVisibility(View.INVISIBLE);
+            tvWindSpeedUnitMh.setVisibility(View.INVISIBLE);
+        } else {
+            swWindSpeed.setVisibility(View.VISIBLE);
+            tvWindSpeedUnitMs.setVisibility(View.VISIBLE);
+            tvWindSpeedUnitMh.setVisibility(View.VISIBLE);
+        }
     }
 }

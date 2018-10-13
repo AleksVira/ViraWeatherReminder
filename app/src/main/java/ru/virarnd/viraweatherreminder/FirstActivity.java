@@ -13,6 +13,18 @@ import ru.virarnd.viraweatherreminder.common.City;
 import ru.virarnd.viraweatherreminder.common.Forecast;
 
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+import static ru.virarnd.viraweatherreminder.WeatherPresenter.PRESSURE_MBAR;
+import static ru.virarnd.viraweatherreminder.WeatherPresenter.PRESSURE_MM;
+import static ru.virarnd.viraweatherreminder.WeatherPresenter.SHOW_HUMIDITY_OFF;
+import static ru.virarnd.viraweatherreminder.WeatherPresenter.SHOW_HUMIDITY_ON;
+import static ru.virarnd.viraweatherreminder.WeatherPresenter.SHOW_PRESSURE_OFF;
+import static ru.virarnd.viraweatherreminder.WeatherPresenter.SHOW_PRESSURE_ON;
+import static ru.virarnd.viraweatherreminder.WeatherPresenter.SHOW_WIND_SPEED_OFF;
+import static ru.virarnd.viraweatherreminder.WeatherPresenter.SHOW_WIND_SPEED_ON;
+import static ru.virarnd.viraweatherreminder.WeatherPresenter.TEMPERATURE_C;
+import static ru.virarnd.viraweatherreminder.WeatherPresenter.TEMPERATURE_F;
+import static ru.virarnd.viraweatherreminder.WeatherPresenter.WIND_SPEED_MH;
+import static ru.virarnd.viraweatherreminder.WeatherPresenter.WIND_SPEED_MS;
 
 public class FirstActivity extends AppCompatActivity implements CityListFragment.OnFragmentInteractionListener {
 
@@ -59,6 +71,36 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     public void onFragmentInteraction(int cityId) {
         Log.d(TAG, "Получен ID = " + cityId);
         weatherPresenter.setCityAndShowDetail(cityId);
+    }
+
+    @Override
+    public void onCheckboxChanged(int boxId, boolean isChecked) {
+        int condition = 0;
+        switch (boxId) {
+            case R.id.cbWind:
+                condition = isChecked ? SHOW_WIND_SPEED_ON : SHOW_WIND_SPEED_OFF;
+                break;
+            case R.id.cbPressure:
+                condition = isChecked ? SHOW_PRESSURE_ON : SHOW_PRESSURE_OFF;
+                break;
+            case R.id.cbHumidity:
+                condition = isChecked ? SHOW_HUMIDITY_ON : SHOW_HUMIDITY_OFF;
+                break;
+            case R.id.swTemp:
+                condition = isChecked ? TEMPERATURE_F : TEMPERATURE_C;
+                break;
+            case R.id.swWind:
+                condition = isChecked ? WIND_SPEED_MH : WIND_SPEED_MS;
+                break;
+            case R.id.swPressure:
+                condition = isChecked ? PRESSURE_MBAR : PRESSURE_MM;
+                break;
+            default:
+                Log.e(TAG, "Кнопка настроек не определена!");
+                break;
+        }
+        weatherPresenter.sendCheckBoxState(condition);
+
     }
 
     public void showForecast(Forecast cityForecast) {

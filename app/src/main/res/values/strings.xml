@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ViraWeatherReminder</string>
     <string name="send_forecast">Send forecast</string>
-    <string name="t_c">t °C</string>
+    <string name="t_c">t</string>
     <string name="wind">wind</string>
     <string name="pressure">pressure</string>
     <string name="humidity">humidity</string>
@@ -9,4 +9,14 @@
     <string name="city">City</string>
     <string name="enter_city_name">Enter city name</string>
     <string name="send_forecast_in_sms">Send forecast in SMS</string>
+    <string name="what_and_how_to_show">What and how to show:</string>
+    <string name="celcius">°C</string>
+    <string name="fahrenheit">°F</string>
+    <string name="units_of_measure">Units of measure</string>
+    <string name="speed_ms">m/s</string>
+    <string name="speed_miles_hour">miles/hour</string>
+    <string name="pressure_mm">mmHg</string>
+    <string name="pressure_mb">mbar</string>
+    <string name="percents">%</string>
+
 </resources>

@@ -5,12 +5,18 @@ import java.util.ArrayList;
 import ru.virarnd.viraweatherreminder.common.City;
 import ru.virarnd.viraweatherreminder.common.Forecast;
 import ru.virarnd.viraweatherreminder.common.ForecastManager;
+import ru.virarnd.viraweatherreminder.common.Settings;
 
 class Model {
+    private Settings settings;
     private final ForecastManager forecastManager;
 
     public Model() {
         this.forecastManager = new ForecastManager();
+        this.settings = Settings.getInstance();
+
+        // TODO Позже настройки будут считываться из сохраненных данных
+        this.settings = settings.defaultSettings();
     }
 
     public Forecast getForecastByTownName(String townName) {

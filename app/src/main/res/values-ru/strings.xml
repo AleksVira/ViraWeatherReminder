@@ -2,12 +2,22 @@
 <resources>
     <string name="app_name">Погодный Напоминатель</string>
     <string name="send_forecast">Отправить прогноз</string>
-    <string name="t_c">t °C</string>
+    <string name="t_c">t</string>
     <string name="wind">ветер</string>
     <string name="pressure">давление</string>
     <string name="humidity">влажность</string>
-    <string name="temperature">temperature</string>
+    <string name="temperature">температура</string>
     <string name="city">Город</string>
     <string name="enter_city_name">Введите название города</string>
     <string name="send_forecast_in_sms">Отправить прогноз в СМС</string>
+    <string name="what_and_how_to_show">Что и как показывать:</string>
+    <string name="celcius">°C</string>
+    <string name="fahrenheit">°F</string>
+    <string name="units_of_measure">Единицы измерения</string>
+    <string name="speed_ms">м/с</string>
+    <string name="speed_miles_hour">миль/час</string>
+    <string name="pressure_mm">мм рт. ст.</string>
+    <string name="pressure_mb">мб</string>
+    <string name="percents">%</string>
+
 </resources>
