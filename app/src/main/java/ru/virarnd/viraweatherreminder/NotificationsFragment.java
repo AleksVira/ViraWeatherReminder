@@ -13,27 +13,32 @@ import ru.virarnd.viraweatherreminder.common.Notification;
 
 import java.util.ArrayList;
 
-import static ru.virarnd.viraweatherreminder.FirstActivity.NOTIFICATIONS_LIST;
-
 public class NotificationsFragment extends Fragment {
+    public final static String NOTIFICATIONS_LIST = "HL1MJC5H";
 
     private ArrayList<Notification> notificationArrayList;
     private OnListFragmentInteractionListener mListener;
 
+    public static NotificationsFragment newInstance(ArrayList<Notification> notificationList) {
+        NotificationsFragment myFragment = new NotificationsFragment();
+        Bundle args = new Bundle();
+        args.putParcelableArrayList(NOTIFICATIONS_LIST, notificationList);
+        myFragment.setArguments(args);
+        return myFragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (getArguments() != null && getArguments().containsKey(NOTIFICATIONS_LIST)) {
+            notificationArrayList = getArguments().getParcelableArrayList(NOTIFICATIONS_LIST);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notifications_list, container, false);
 
-        Bundle bundle = getArguments();
-        notificationArrayList = bundle.getParcelableArrayList(NOTIFICATIONS_LIST);
-
-        // Set the adapter
         RecyclerView recyclerView = view.findViewById(R.id.notificationsList);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         recyclerView.setAdapter(new MyNotificationsRecyclerViewAdapter(notificationArrayList, mListener));

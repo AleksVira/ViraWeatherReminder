@@ -32,7 +32,6 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     private final static String TAG = FirstActivity.class.getName();
     public final static String PARCEL = "RM46";
     public final static String FORECAST = "XN7A";
-    public final static String NOTIFICATIONS_LIST = "HL1MJC5H";
 
     private CityListFragment cityListFragment;
     private ForecastFragment forecastFragment;
@@ -59,8 +58,6 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
             transaction.add(R.id.mainFrame, cityListFragment);
             transaction.commit();
         }
-
-
     }
 
     @Override
@@ -111,11 +108,7 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     }
 
     public void showForecast(Forecast cityForecast) {
-        forecastFragment = new ForecastFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(FORECAST, cityForecast);
-        forecastFragment.setArguments(bundle);
-
+        ForecastFragment forecastFragment = ForecastFragment.newInstance(cityForecast);
         if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
             getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, forecastFragment).commit();
         } else {
@@ -124,10 +117,7 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     }
 
     public void showNotifications(ArrayList<Notification> notificationList) {
-        NotificationsFragment notificationsFragment = new NotificationsFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList(NOTIFICATIONS_LIST, notificationList);
-        notificationsFragment.setArguments(bundle);
+        NotificationsFragment notificationsFragment = NotificationsFragment.newInstance(notificationList);
         if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
             getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, notificationsFragment).commit();
         } else {

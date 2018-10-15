@@ -32,7 +32,6 @@ public class ForecastFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments() != null && getArguments().containsKey(FORECAST)) {
             forecast = getArguments().getParcelable(FORECAST);
         }
