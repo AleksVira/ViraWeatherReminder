@@ -10,6 +10,7 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -27,7 +28,8 @@ public class CityListFragment extends Fragment {
     private final static String TAG = CityListFragment.class.getName();
 
     private ArrayList<City> cityList;
-    private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener cityListListener;
+    private OnFragmentInteractionListener notificationsListListener;
     private boolean cbWindState;
     private boolean cbPressureState;
     private boolean cbHumidityState;
@@ -42,6 +44,8 @@ public class CityListFragment extends Fragment {
     private TextView tvWindSpeedUnitMh;
     private TextView tvPressureUnitMm;
     private TextView tvPressureUnitMbar;
+
+    private Button btNotificationsList;
 
 
     @Override
@@ -68,9 +72,9 @@ public class CityListFragment extends Fragment {
         cityList = bundle.getParcelableArrayList(PARCEL);
 
         // Список городов
-        RecyclerView recyclerView = view.findViewById(R.id.list);
+        RecyclerView recyclerView = view.findViewById(R.id.notificationsList);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recyclerView.setAdapter(new CityListRecyclerViewAdapter(cityList, mListener));
+        recyclerView.setAdapter(new CityListRecyclerViewAdapter(cityList, cityListListener));
 
         // Настройки прогноза
         cbWindSpeed = view.findViewById(R.id.cbWind);
@@ -102,6 +106,9 @@ public class CityListFragment extends Fragment {
         checkWindGroup();
         checkPressureGroup();
 
+        btNotificationsList = view.findViewById(R.id.btNotifications);
+        btNotificationsList.setOnClickListener(new ButtonListener());
+
         return view;
     }
 
@@ -109,7 +116,7 @@ public class CityListFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+            cityListListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -119,13 +126,15 @@ public class CityListFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        cityListListener = null;
     }
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(int cityId);
 
         void onCheckboxChanged(int buttonId, boolean isChecked);
+
+        void onButtonClick(int buttonId);
     }
 
 
@@ -145,7 +154,7 @@ public class CityListFragment extends Fragment {
                 default:
                     break;
             }
-            mListener.onCheckboxChanged(buttonView.getId(), isChecked);
+            cityListListener.onCheckboxChanged(buttonView.getId(), isChecked);
         }
     }
 
@@ -170,6 +179,13 @@ public class CityListFragment extends Fragment {
             swWindSpeed.setVisibility(View.VISIBLE);
             tvWindSpeedUnitMs.setVisibility(View.VISIBLE);
             tvWindSpeedUnitMh.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private class ButtonListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            cityListListener.onButtonClick(view.getId());
         }
     }
 }

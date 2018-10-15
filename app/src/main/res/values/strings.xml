@@ -18,5 +18,10 @@
     <string name="pressure_mm">mmHg</string>
     <string name="pressure_mb">mbar</string>
     <string name="percents">%</string>
+    <string name="city_picture">city picture</string>
+    <string name="event">Event</string>
+    <string name="event_date">Event date</string>
+    <string name="check_date">Check time</string>
+    <string name="Events">Events</string>
 
 </resources>

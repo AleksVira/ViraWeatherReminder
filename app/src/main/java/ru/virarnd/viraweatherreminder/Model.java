@@ -1,10 +1,14 @@
 package ru.virarnd.viraweatherreminder;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import ru.virarnd.viraweatherreminder.common.City;
 import ru.virarnd.viraweatherreminder.common.Forecast;
 import ru.virarnd.viraweatherreminder.common.ForecastManager;
+import ru.virarnd.viraweatherreminder.common.Notification;
 import ru.virarnd.viraweatherreminder.common.Settings;
 
 class Model {
@@ -44,5 +48,38 @@ class Model {
 
     public Forecast getForecastById(int cityId) {
         return forecastManager.getCurrentForecastById(cityId);
+    }
+
+    public ArrayList<Notification> getNotificationsList() {
+        ArrayList<Notification> notifications = new ArrayList<>();
+
+        notifications.add(new Notification("Прогулка в парке", new City(1, "Москва", "ru"),
+                new GregorianCalendar(2018, Calendar.OCTOBER, 20, 15, 15, 0),
+                new GregorianCalendar(2018, Calendar.OCTOBER, 20, 13, 15, 0)));
+
+        notifications.add(new Notification("Пикник", new City(1, "Москва", "ru"),
+                new GregorianCalendar(2018, Calendar.OCTOBER, 15, 11, 0, 0),
+                new GregorianCalendar(2018, Calendar.OCTOBER, 15, 9, 0, 0)));
+
+        notifications.add(new Notification("Дача", new City(1, "Москва", "ru"),
+                new GregorianCalendar(2018, Calendar.NOVEMBER, 9, 9, 0, 0),
+                new GregorianCalendar(2018, Calendar.NOVEMBER, 9, 7, 0, 0)));
+
+        notifications.add(new Notification("Пробежка", new City(1, "Москва", "ru"),
+                new GregorianCalendar(2018, Calendar.OCTOBER, 25, 7, 0, 0),
+                new GregorianCalendar(2018, Calendar.OCTOBER, 25, 5, 0, 0)));
+
+        notifications.add(new Notification("Прогулка в парке", new City(1, "Москва", "ru"),
+                new GregorianCalendar(2018, Calendar.OCTOBER, 25, 19, 0, 0),
+                new GregorianCalendar(2018, Calendar.OCTOBER, 25, 16, 30, 0)));
+
+        notifications.add(new Notification("Пробежка", new City(1, "Москва", "ru"),
+                new GregorianCalendar(2018, Calendar.OCTOBER, 22, 7, 0, 0),
+                new GregorianCalendar(2018, Calendar.OCTOBER, 22, 5, 0, 0)));
+
+        notifications.add(new Notification("Прогулка в парке", new City(1, "Москва", "ru"),
+                new GregorianCalendar(2018, Calendar.OCTOBER, 22, 19, 0, 0),
+                new GregorianCalendar(2018, Calendar.OCTOBER, 22, 16, 30, 0)));
+        return notifications;
     }
 }

@@ -3,6 +3,8 @@ package ru.virarnd.viraweatherreminder.common;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Objects;
+
 public class City implements Parcelable {
     private int id;
     private String name;
@@ -73,4 +75,22 @@ public class City implements Parcelable {
             return new City[size];
         }
     };
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (!(obj instanceof City)) {
+            return false;
+        }
+        City city = (City) obj;
+        return id == city.id &&
+                Objects.equals(name, city.name) &&
+                Objects.equals(country, city.country);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, country);
+    }
+
 }

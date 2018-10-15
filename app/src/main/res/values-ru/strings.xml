@@ -19,5 +19,10 @@
     <string name="pressure_mm">мм рт. ст.</string>
     <string name="pressure_mb">мб</string>
     <string name="percents">%</string>
+    <string name="city_picture">картинка города</string>
+    <string name="event">Событие</string>
+    <string name="event_date">Дата события</string>
+    <string name="check_date">Время проверки</string>
+    <string name="Events">Уведомления</string>
 
 </resources>

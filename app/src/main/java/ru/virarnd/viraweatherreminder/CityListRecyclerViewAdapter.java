@@ -20,7 +20,7 @@ public class CityListRecyclerViewAdapter extends RecyclerView.Adapter<CityListRe
     private CityListFragment.OnFragmentInteractionListener mListener;
     private int row_index = -1;
 
-    public CityListRecyclerViewAdapter(List<City> cities, CityListFragment.OnFragmentInteractionListener listener) {
+    CityListRecyclerViewAdapter(List<City> cities, CityListFragment.OnFragmentInteractionListener listener) {
         this.mListener = listener;
         this.cities = cities;
     }
@@ -47,7 +47,6 @@ public class CityListRecyclerViewAdapter extends RecyclerView.Adapter<CityListRe
 //                mPresenter.setCityAndShowDetail(holder.mItem);
                 row_index = holder.getAdapterPosition();
                 notifyDataSetChanged();
-
             }
         });
 
@@ -64,15 +63,15 @@ public class CityListRecyclerViewAdapter extends RecyclerView.Adapter<CityListRe
         return cities.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
-        public final TextView mContentView;
-        public City mItem;
+        final TextView mContentView;
+        City mItem;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
-            mContentView = view.findViewById(R.id.cityName);
+            mContentView = view.findViewById(R.id.tvCityName);
         }
 
     }

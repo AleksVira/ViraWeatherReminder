@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import ru.virarnd.viraweatherreminder.common.City;
 import ru.virarnd.viraweatherreminder.common.Forecast;
+import ru.virarnd.viraweatherreminder.common.Notification;
 import ru.virarnd.viraweatherreminder.common.Settings;
 
 class WeatherPresenter {
@@ -105,5 +106,14 @@ class WeatherPresenter {
 
 
         }
+    }
+
+    public void sendButtonPressed(int buttonId) {
+        if (buttonId == R.id.btNotifications) {
+            ArrayList<Notification> notificationList = model.getNotificationsList();
+            activity.showNotifications(notificationList);
+        }
+
+
     }
 }

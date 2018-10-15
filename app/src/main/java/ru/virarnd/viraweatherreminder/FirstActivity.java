@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import ru.virarnd.viraweatherreminder.common.City;
 import ru.virarnd.viraweatherreminder.common.Forecast;
+import ru.virarnd.viraweatherreminder.common.Notification;
 
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 import static ru.virarnd.viraweatherreminder.WeatherPresenter.PRESSURE_MBAR;
@@ -26,11 +27,12 @@ import static ru.virarnd.viraweatherreminder.WeatherPresenter.TEMPERATURE_F;
 import static ru.virarnd.viraweatherreminder.WeatherPresenter.WIND_SPEED_MH;
 import static ru.virarnd.viraweatherreminder.WeatherPresenter.WIND_SPEED_MS;
 
-public class FirstActivity extends AppCompatActivity implements CityListFragment.OnFragmentInteractionListener {
+public class FirstActivity extends AppCompatActivity implements CityListFragment.OnFragmentInteractionListener, NotificationsFragment.OnListFragmentInteractionListener{
 
     private final static String TAG = FirstActivity.class.getName();
     public final static String PARCEL = "RM46";
     public final static String FORECAST = "XN7A";
+    public final static String NOTIFICATIONS_LIST = "HL1MJC5H";
 
     private CityListFragment cityListFragment;
     private ForecastFragment forecastFragment;
@@ -103,6 +105,11 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
 
     }
 
+    @Override
+    public void onButtonClick(int buttonId) {
+        weatherPresenter.sendButtonPressed(buttonId);
+    }
+
     public void showForecast(Forecast cityForecast) {
         forecastFragment = new ForecastFragment();
         Bundle bundle = new Bundle();
@@ -114,5 +121,22 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
         } else {
             getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, forecastFragment).addToBackStack("E7LY3SBO").commit();
         }
+    }
+
+    public void showNotifications(ArrayList<Notification> notificationList) {
+        NotificationsFragment notificationsFragment = new NotificationsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(NOTIFICATIONS_LIST, notificationList);
+        notificationsFragment.setArguments(bundle);
+        if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, notificationsFragment).commit();
+        } else {
+            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, notificationsFragment).addToBackStack("OMDPE552V4").commit();
+        }
+    }
+
+    @Override
+    public void onListFragmentInteraction(int item) {
+        //TODO Определить реакцию списка на нажатие элемента
     }
 }
