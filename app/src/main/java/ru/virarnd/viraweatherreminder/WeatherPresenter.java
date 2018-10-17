@@ -9,20 +9,24 @@ import ru.virarnd.viraweatherreminder.common.Settings;
 
 class WeatherPresenter {
 
-    // Набор констант для определения состояния переключателей в настройках
-    public final static int SHOW_WIND_SPEED_ON = 388;
-    public final static int SHOW_WIND_SPEED_OFF = 535;
-    public final static int SHOW_PRESSURE_ON = 48;
-    public final static int SHOW_PRESSURE_OFF = 794;
-    public final static int SHOW_HUMIDITY_ON = 707;
-    public final static int SHOW_HUMIDITY_OFF = 425;
+    // TODO Сейчас все команды передаются отдельно. Можно ли это улучшить? Через какой-то интерфейс или другой класс...
+    // Чтобы можно было подключить другой View с таким же набором команд. Или оставить как есть?
 
-    public final static int TEMPERATURE_C = 783;
-    public final static int TEMPERATURE_F = 3821;
-    public final static int WIND_SPEED_MS = 209;
-    public final static int WIND_SPEED_MH = 973;
-    public final static int PRESSURE_MM = 991;
-    public final static int PRESSURE_MBAR = 33;
+
+    // Набор констант для определения состояния переключателей в настройках
+    final static int SHOW_WIND_SPEED_ON = 388;
+    final static int SHOW_WIND_SPEED_OFF = 535;
+    final static int SHOW_PRESSURE_ON = 48;
+    final static int SHOW_PRESSURE_OFF = 794;
+    final static int SHOW_HUMIDITY_ON = 707;
+    final static int SHOW_HUMIDITY_OFF = 425;
+
+    final static int TEMPERATURE_C = 783;
+    final static int TEMPERATURE_F = 3821;
+    final static int WIND_SPEED_MS = 209;
+    final static int WIND_SPEED_MH = 973;
+    final static int PRESSURE_MM = 991;
+    final static int PRESSURE_MBAR = 33;
 
 
     private static WeatherPresenter instance = null;

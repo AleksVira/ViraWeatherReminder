@@ -33,6 +33,7 @@ public class NotificationsFragment extends Fragment {
         if (getArguments() != null && getArguments().containsKey(NOTIFICATIONS_LIST)) {
             notificationArrayList = getArguments().getParcelableArrayList(NOTIFICATIONS_LIST);
         }
+
     }
 
     @Override
@@ -66,4 +67,6 @@ public class NotificationsFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(int item);
     }
+
+
 }

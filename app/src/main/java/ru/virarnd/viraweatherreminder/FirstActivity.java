@@ -1,10 +1,12 @@
 package ru.virarnd.viraweatherreminder;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.FrameLayout;
 
 
 import java.util.ArrayList;
@@ -109,24 +111,30 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
 
     public void showForecast(Forecast cityForecast) {
         ForecastFragment forecastFragment = ForecastFragment.newInstance(cityForecast);
+        String tag = getTag(forecastFragment);
         if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, forecastFragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, forecastFragment, tag).commit();
         } else {
-            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, forecastFragment).addToBackStack("E7LY3SBO").commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, forecastFragment).addToBackStack(tag).commit();
         }
     }
 
     public void showNotifications(ArrayList<Notification> notificationList) {
         NotificationsFragment notificationsFragment = NotificationsFragment.newInstance(notificationList);
+        String tag = getTag(notificationsFragment);
         if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, notificationsFragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, notificationsFragment, tag).commit();
         } else {
-            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, notificationsFragment).addToBackStack("OMDPE552V4").commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, notificationsFragment).addToBackStack(tag).commit();
         }
     }
 
     @Override
     public void onListFragmentInteraction(int item) {
         //TODO Определить реакцию списка на нажатие элемента
+    }
+
+    private static String getTag(Fragment fragment) {
+        return fragment.getClass().getName();
     }
 }
