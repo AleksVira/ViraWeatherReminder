@@ -2,6 +2,7 @@ package ru.virarnd.viraweatherreminder;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,8 +17,13 @@ import java.util.ArrayList;
 public class NotificationsFragment extends Fragment {
     public final static String NOTIFICATIONS_LIST = "HL1MJC5H";
 
-    private ArrayList<Notification> notificationArrayList;
     private OnListFragmentInteractionListener mListener;
+    private ArrayList<Notification> notificationArrayList;
+    private MyNotificationsRecyclerViewAdapter myNotificationsRecyclerViewAdapter;
+
+    public MyNotificationsRecyclerViewAdapter getMyNotificationsRecyclerViewAdapter() {
+        return myNotificationsRecyclerViewAdapter;
+    }
 
     public static NotificationsFragment newInstance(ArrayList<Notification> notificationList) {
         NotificationsFragment myFragment = new NotificationsFragment();
@@ -33,7 +39,6 @@ public class NotificationsFragment extends Fragment {
         if (getArguments() != null && getArguments().containsKey(NOTIFICATIONS_LIST)) {
             notificationArrayList = getArguments().getParcelableArrayList(NOTIFICATIONS_LIST);
         }
-
     }
 
     @Override
@@ -42,7 +47,11 @@ public class NotificationsFragment extends Fragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.notificationsList);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recyclerView.setAdapter(new MyNotificationsRecyclerViewAdapter(notificationArrayList, mListener));
+        myNotificationsRecyclerViewAdapter = new MyNotificationsRecyclerViewAdapter(notificationArrayList, mListener);
+        recyclerView.setAdapter(myNotificationsRecyclerViewAdapter);
+
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(new FabNewNotifyListener());
         return view;
     }
 
@@ -50,10 +59,10 @@ public class NotificationsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
+        try {
             mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
         }
     }
@@ -65,8 +74,16 @@ public class NotificationsFragment extends Fragment {
     }
 
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(int item);
+        void onNotificationsListFragmentInteraction(int item);
+
+        void onFabClick();
     }
 
 
+    private class FabNewNotifyListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            mListener.onFabClick();
+        }
+    }
 }

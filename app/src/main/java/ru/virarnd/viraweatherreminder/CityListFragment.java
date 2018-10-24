@@ -28,8 +28,8 @@ public class CityListFragment extends Fragment {
     private final static String TAG = CityListFragment.class.getName();
 
     private ArrayList<City> cityList;
-    private OnFragmentInteractionListener cityListListener;
-    private OnFragmentInteractionListener notificationsListListener;
+    private OnCityListFragmentInteractionListener cityListListener;
+//    private OnCityListFragmentInteractionListener notificationsListListener;
     private boolean cbWindState;
     private boolean cbPressureState;
     private boolean cbHumidityState;
@@ -115,11 +115,11 @@ public class CityListFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            cityListListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+        try {
+            cityListListener = (OnCityListFragmentInteractionListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnCityListFragmentInteractionListener");
         }
     }
 
@@ -129,7 +129,7 @@ public class CityListFragment extends Fragment {
         cityListListener = null;
     }
 
-    public interface OnFragmentInteractionListener {
+    public interface OnCityListFragmentInteractionListener {
         void onFragmentInteraction(int cityId);
 
         void onCheckboxChanged(int buttonId, boolean isChecked);

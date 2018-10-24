@@ -8,6 +8,5 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/primaryLight</item>
     </style>
-    <!--<item name="windowNoTitle">true</item>-->
 
 </resources>

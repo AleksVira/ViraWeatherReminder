@@ -3,7 +3,7 @@ package ru.virarnd.viraweatherreminder.common;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Forecast implements Parcelable {
+public class DailyForecast implements Parcelable {
     private final City city;
     private final int dayTemp;
     private final int nightTemp;
@@ -112,13 +112,13 @@ public class Forecast implements Parcelable {
             return this;
         }
 
-        public Forecast build() {
-            return new Forecast(this);
+        public DailyForecast build() {
+            return new DailyForecast(this);
         }
 
     }
 
-    private Forecast(Builder builder) {
+    private DailyForecast(Builder builder) {
         this.city = builder.city;
         this.dayTemp = builder.dayTemp;
         this.nightTemp = builder.nightTemp;
@@ -146,7 +146,7 @@ public class Forecast implements Parcelable {
         dest.writeInt(this.weatherConditions);
     }
 
-    private Forecast(Parcel in) {
+    private DailyForecast(Parcel in) {
         this.city = in.readParcelable(City.class.getClassLoader());
         this.dayTemp = in.readInt();
         this.nightTemp = in.readInt();
@@ -157,15 +157,15 @@ public class Forecast implements Parcelable {
         this.weatherConditions = in.readInt();
     }
 
-    public static final Parcelable.Creator<Forecast> CREATOR = new Parcelable.Creator<Forecast>() {
+    public static final Parcelable.Creator<DailyForecast> CREATOR = new Parcelable.Creator<DailyForecast>() {
         @Override
-        public Forecast createFromParcel(Parcel source) {
-            return new Forecast(source);
+        public DailyForecast createFromParcel(Parcel source) {
+            return new DailyForecast(source);
         }
 
         @Override
-        public Forecast[] newArray(int size) {
-            return new Forecast[size];
+        public DailyForecast[] newArray(int size) {
+            return new DailyForecast[size];
         }
     };
 }

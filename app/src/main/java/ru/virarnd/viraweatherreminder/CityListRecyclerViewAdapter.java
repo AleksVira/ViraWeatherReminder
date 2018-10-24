@@ -17,10 +17,10 @@ public class CityListRecyclerViewAdapter extends RecyclerView.Adapter<CityListRe
     private final static String TAG = CityListRecyclerViewAdapter.class.getName();
 
     private final List<City> cities;
-    private CityListFragment.OnFragmentInteractionListener mListener;
+    private CityListFragment.OnCityListFragmentInteractionListener mListener;
     private int row_index = -1;
 
-    CityListRecyclerViewAdapter(List<City> cities, CityListFragment.OnFragmentInteractionListener listener) {
+    CityListRecyclerViewAdapter(List<City> cities, CityListFragment.OnCityListFragmentInteractionListener listener) {
         this.mListener = listener;
         this.cities = cities;
     }

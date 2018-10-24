@@ -31,11 +31,11 @@ public class ForecastManager {
 
     // Возвращает прогноз на один из пяти дней относительно текущего
     // dayFromCurrent -- сдвиг относительно текущего дня
-    public Forecast getForecastByIdAndDay(int cityId, int dayFromCurrent) {
+    public DailyForecast getForecastByCityIdAndDay(int cityId, int dayFromCurrent) {
         return weatherDataRequester.getFiveDaysForecast(cityId).get(dayFromCurrent);
     }
 
-    public Forecast getCurrentForecastById(int cityId) {
+    public DailyForecast getCurrentForecastById(int cityId) {
         return weatherDataRequester.getCurrentForecast(cityId);
     }
 }

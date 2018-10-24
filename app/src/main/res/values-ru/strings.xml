@@ -24,5 +24,7 @@
     <string name="event_date">Дата события</string>
     <string name="check_date">Время проверки</string>
     <string name="Events">Уведомления</string>
+    <string name="history">История</string>
+    <string name="select_new_city">Выбрать новый город</string>
 
 </resources>

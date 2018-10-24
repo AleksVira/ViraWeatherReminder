@@ -1,21 +1,27 @@
 package ru.virarnd.viraweatherreminder;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import ru.virarnd.viraweatherreminder.common.City;
-import ru.virarnd.viraweatherreminder.common.Forecast;
+import ru.virarnd.viraweatherreminder.common.DailyForecast;
+import ru.virarnd.viraweatherreminder.common.ForecastHistory;
 import ru.virarnd.viraweatherreminder.common.ForecastManager;
+import ru.virarnd.viraweatherreminder.common.MyApp;
 import ru.virarnd.viraweatherreminder.common.Notification;
 import ru.virarnd.viraweatherreminder.common.Settings;
 
-class Model {
+public class Model {
+
+    private final static String TAG = Model.class.getName();
+
     private Settings settings;
     private final ForecastManager forecastManager;
+    private static Model instance;
+    private ArrayList<Notification> notifications;
 
-    public Model() {
+    private Model() {
         this.forecastManager = new ForecastManager();
         this.settings = Settings.getInstance();
 
@@ -23,63 +29,126 @@ class Model {
         this.settings = settings.defaultSettings();
     }
 
-    public Forecast getForecastByTownName(String townName) {
-        Forecast forecast;
-        if (townName.equals("Moscow") || townName.equals("Москва")) {
-            forecast = forecastManager.getCurrentForecastById(1);
-        } else if (townName.equals("Saint Petersburg") || townName.equals("Санкт-Петербург")) {
-            forecast = forecastManager.getCurrentForecastById(2);
-        } else if (townName.equals("Rostov-na-Donu") || townName.equals("Ростов-на-Дону")) {
-            forecast = forecastManager.getCurrentForecastById(3);
-        } else {
-            forecast = forecastManager.getCurrentForecastById(1);
+    public static Model getInstance() {
+        if (instance == null) {
+            instance = new Model();
         }
-        return forecast;
+        return instance;
     }
 
-    public ArrayList<City> getLastUsedCityList() {
+    public DailyForecast getForecastByTownName(String townName) {
+        DailyForecast dailyForecast;
+        if (townName.equals("Moscow") || townName.equals("Москва")) {
+            dailyForecast = forecastManager.getCurrentForecastById(1);
+        } else if (townName.equals("Saint Petersburg") || townName.equals("Санкт-Петербург")) {
+            dailyForecast = forecastManager.getCurrentForecastById(2);
+        } else if (townName.equals("Rostov-na-Donu") || townName.equals("Ростов-на-Дону")) {
+            dailyForecast = forecastManager.getCurrentForecastById(3);
+        } else {
+            dailyForecast = forecastManager.getCurrentForecastById(1);
+        }
+        return dailyForecast;
+    }
+
+    public City getCityById(int cityId) {
+        switch (cityId) {
+            case 1:
+                return new City(1, "Moscow");
+            case 2:
+                return new City(2, "Saint Petersburg");
+            case 3:
+                return new City(3, "Rostov-na-Donu");
+            default:
+                return new City(1, "Moscow");
+        }
+    }
+
+    City getCityIdByName(String testName) {
+        switch (testName) {
+            case "Moscow":
+                return new City(1, "Moscow");
+            case "Saint Petersburg":
+                return new City(2, "Saint Petersburg");
+            case "Rostov-na-Donu":
+                return new City(3, "Rostov-na-Donu");
+            default:
+                return null;
+        }
+    }
+
+    ArrayList<City> getLastUsedCityListWithSelectNew() {
+        ArrayList<City> cities = getLastUsedCityList();
+        cities.add(new City(0, MyApp.getAppContext().getString(R.string.select_new_city)));
+        return cities;
+    }
+
+    ArrayList<City> getLastUsedCityList() {
         ArrayList<City> cities = new ArrayList<>();
-        cities.add(new City(0, "Select new city"));
         cities.add(new City(1, "Moscow"));
         cities.add(new City(3, "Rostov-na-Donu"));
         cities.add(new City(2, "Saint Petersburg"));
         return cities;
     }
 
-    public Forecast getForecastById(int cityId) {
+    public DailyForecast getForecastByCityId(int cityId) {
         return forecastManager.getCurrentForecastById(cityId);
     }
 
     public ArrayList<Notification> getNotificationsList() {
-        ArrayList<Notification> notifications = new ArrayList<>();
+        if (notifications == null) {
+            notifications = new ArrayList<>();
+            notifications.add(new Notification("Asd", new City(1, "Moscow", ""),
+                    new GregorianCalendar(2018, Calendar.OCTOBER, 28, 19, 0, 0),
+                    new GregorianCalendar(2018, Calendar.OCTOBER, 28, 17, 0, 0)));
 
-        notifications.add(new Notification("Прогулка в парке", new City(1, "Москва", "ru"),
-                new GregorianCalendar(2018, Calendar.OCTOBER, 20, 15, 15, 0),
-                new GregorianCalendar(2018, Calendar.OCTOBER, 20, 13, 15, 0)));
+            notifications.add(new Notification("Прогулка в парке", new City(1, "Москва", "ru"),
+                    new GregorianCalendar(2018, Calendar.OCTOBER, 20, 15, 15, 0),
+                    new GregorianCalendar(2018, Calendar.OCTOBER, 20, 13, 15, 0)));
 
-        notifications.add(new Notification("Пикник", new City(1, "Москва", "ru"),
-                new GregorianCalendar(2018, Calendar.OCTOBER, 15, 11, 0, 0),
-                new GregorianCalendar(2018, Calendar.OCTOBER, 15, 9, 0, 0)));
+            notifications.add(new Notification("Пикник", new City(1, "Москва", "ru"),
+                    new GregorianCalendar(2018, Calendar.OCTOBER, 15, 11, 0, 0),
+                    new GregorianCalendar(2018, Calendar.OCTOBER, 15, 9, 0, 0)));
 
-        notifications.add(new Notification("Дача", new City(1, "Москва", "ru"),
-                new GregorianCalendar(2018, Calendar.NOVEMBER, 9, 9, 0, 0),
-                new GregorianCalendar(2018, Calendar.NOVEMBER, 9, 7, 0, 0)));
+            notifications.add(new Notification("Дача", new City(1, "Москва", "ru"),
+                    new GregorianCalendar(2018, Calendar.NOVEMBER, 9, 9, 0, 0),
+                    new GregorianCalendar(2018, Calendar.NOVEMBER, 9, 7, 0, 0)));
 
-        notifications.add(new Notification("Пробежка", new City(1, "Москва", "ru"),
-                new GregorianCalendar(2018, Calendar.OCTOBER, 25, 7, 0, 0),
-                new GregorianCalendar(2018, Calendar.OCTOBER, 25, 5, 0, 0)));
+            notifications.add(new Notification("Пробежка", new City(1, "Москва", "ru"),
+                    new GregorianCalendar(2018, Calendar.OCTOBER, 25, 7, 0, 0),
+                    new GregorianCalendar(2018, Calendar.OCTOBER, 25, 5, 0, 0)));
 
-        notifications.add(new Notification("Прогулка в парке", new City(1, "Москва", "ru"),
-                new GregorianCalendar(2018, Calendar.OCTOBER, 25, 19, 0, 0),
-                new GregorianCalendar(2018, Calendar.OCTOBER, 25, 16, 30, 0)));
+            notifications.add(new Notification("Прогулка в парке", new City(1, "Москва", "ru"),
+                    new GregorianCalendar(2018, Calendar.OCTOBER, 25, 19, 0, 0),
+                    new GregorianCalendar(2018, Calendar.OCTOBER, 25, 16, 30, 0)));
 
-        notifications.add(new Notification("Пробежка", new City(1, "Москва", "ru"),
-                new GregorianCalendar(2018, Calendar.OCTOBER, 22, 7, 0, 0),
-                new GregorianCalendar(2018, Calendar.OCTOBER, 22, 5, 0, 0)));
-
-        notifications.add(new Notification("Прогулка в парке", new City(1, "Москва", "ru"),
-                new GregorianCalendar(2018, Calendar.OCTOBER, 22, 19, 0, 0),
-                new GregorianCalendar(2018, Calendar.OCTOBER, 22, 16, 30, 0)));
+            notifications.add(new Notification("Пробежка", new City(1, "Москва", "ru"),
+                    new GregorianCalendar(2018, Calendar.OCTOBER, 22, 7, 0, 0),
+                    new GregorianCalendar(2018, Calendar.OCTOBER, 22, 5, 0, 0)));
+        }
         return notifications;
     }
+
+
+    // Имитирую создание "истории прогноза" для города с определенным cityId. Создаю историю из записи за пять дней тому назад.
+    ForecastHistory getForecastHistoryByCityId(int cityId, GregorianCalendar calendar) {
+//        SimpleDateFormat fmt = new SimpleDateFormat("dd MMM yy");
+        calendar.add(Calendar.DATE, -6);
+        ForecastHistory history = new ForecastHistory(getCityById(cityId));
+        for (int i = 0; i < 5; i++) {
+            GregorianCalendar myCal = new GregorianCalendar(2018, 9, i + 10);
+//            myCal = calendar;
+//            myCal.add(Calendar.DATE, +1);
+//            fmt.setCalendar(myCal);
+//            String dateFormatted = fmt.format(myCal.getTime());
+//            Log.d(TAG, dateFormatted);
+
+            DailyForecast dailyHistoryForecast = forecastManager.getForecastByCityIdAndDay(cityId, i);
+
+            history.getForecastMap().put(myCal, dailyHistoryForecast);
+        }
+//        Log.d(TAG, "History finished");
+        return history;
+    }
+
+
 }

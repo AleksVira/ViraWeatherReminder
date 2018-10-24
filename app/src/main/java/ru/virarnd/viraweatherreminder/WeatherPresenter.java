@@ -1,9 +1,11 @@
 package ru.virarnd.viraweatherreminder;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 import ru.virarnd.viraweatherreminder.common.City;
-import ru.virarnd.viraweatherreminder.common.Forecast;
+import ru.virarnd.viraweatherreminder.common.DailyForecast;
+import ru.virarnd.viraweatherreminder.common.ForecastHistory;
 import ru.virarnd.viraweatherreminder.common.Notification;
 import ru.virarnd.viraweatherreminder.common.Settings;
 
@@ -32,7 +34,8 @@ class WeatherPresenter {
     private static WeatherPresenter instance = null;
     private FirstActivity activity;
     private Settings settings = Settings.getInstance();
-    private final Model model = new Model();
+    private final Model model = Model.getInstance();
+    private ArrayList<Notification> notificationList;
 
     private WeatherPresenter() {
     }
@@ -49,10 +52,14 @@ class WeatherPresenter {
         return model.getLastUsedCityList();
     }
 
+    ArrayList<City> getLastUsedCityListWithSelectNew() {
+        return model.getLastUsedCityListWithSelectNew();
+    }
+
     void setCityAndShowDetail(int cityId) {
         if (cityId != 0) {
-            Forecast cityForecast = model.getForecastById(cityId);
-            activity.showForecast(cityForecast);
+            DailyForecast cityDailyForecast = model.getForecastByCityId(cityId);
+            activity.showForecast(cityDailyForecast);
         }
     }
 
@@ -107,17 +114,47 @@ class WeatherPresenter {
                 break;
             default:
                 break;
-
-
         }
     }
 
-    public void sendButtonPressed(int buttonId) {
+    void sendButtonPressed(int buttonId) {
         if (buttonId == R.id.btNotifications) {
-            ArrayList<Notification> notificationList = model.getNotificationsList();
+            notificationList = model.getNotificationsList();
             activity.showNotifications(notificationList);
         }
+    }
 
+    void sendButtonPressedAndCityId(int buttonId, int cityId) {
+        if (buttonId == R.id.btHistory) {
+            activity.showHistoryForecast(cityId);
+        }
+    }
 
+    ForecastHistory getForecastHistoryByCityId(int cityId) {
+        return model.getForecastHistoryByCityId(cityId, new GregorianCalendar());
+    }
+
+    void sendNewNotificationFabClicked() {
+        activity.showCreateNewNotificationFragment();
+    }
+
+    City askPresenterCityByName(String cityName) {
+        return model.getCityIdByName(cityName);
+    }
+
+    boolean checkNewNotification(String newNotificationName, City newNotificationCity, GregorianCalendar newNotificationDate) {
+        Notification testNotification = new Notification(newNotificationName, newNotificationCity, newNotificationDate);
+        for (Notification notification : notificationList) {
+            if (testNotification.equals(notification)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addNewNotification(String newNotificationName, City newNotificationCity, GregorianCalendar newNotificationDate, GregorianCalendar newCheckNotificationTime) {
+        Notification newNotification = new Notification(newNotificationName, newNotificationCity, newNotificationDate, newCheckNotificationTime);
+        notificationList.add(newNotification);
+        activity.closeCreationFragment();
     }
 }

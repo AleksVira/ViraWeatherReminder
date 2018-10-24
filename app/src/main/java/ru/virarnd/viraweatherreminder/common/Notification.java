@@ -24,6 +24,12 @@ public class Notification implements Parcelable {
         this.checkDate = checkDate;
     }
 
+    public Notification(String notificationName, City currentCity, GregorianCalendar eventDate) {
+        this.eventName = notificationName;
+        this.city = currentCity;
+        this.eventDate = eventDate;
+    }
+
     public String getEventName() {
         return eventName;
     }
@@ -65,7 +71,11 @@ public class Notification implements Parcelable {
         Notification notification = (Notification) obj;
         return Objects.equals(eventName, notification.eventName) &&
                 Objects.equals(city, notification.city) &&
-                Objects.equals(eventDate, notification.eventDate);
+                Objects.equals(eventDate.get(Calendar.YEAR), notification.eventDate.get(Calendar.YEAR)) &&
+                Objects.equals(eventDate.get(Calendar.MONTH), notification.eventDate.get(Calendar.MONTH)) &&
+                Objects.equals(eventDate.get(Calendar.DAY_OF_MONTH), notification.eventDate.get(Calendar.DAY_OF_MONTH)) &&
+                Objects.equals(eventDate.get(Calendar.HOUR_OF_DAY), notification.eventDate.get(Calendar.HOUR_OF_DAY)) &&
+                Objects.equals(eventDate.get(Calendar.MINUTE), notification.eventDate.get(Calendar.MINUTE));
     }
 
     @Override

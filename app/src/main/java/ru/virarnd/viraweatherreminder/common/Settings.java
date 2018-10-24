@@ -20,7 +20,6 @@ public class Settings {
     private String pressureUnit;
     private String humidityUnit;
 
-
     private static Settings instance;
 
     private Settings() {

@@ -58,7 +58,7 @@ public class City implements Parcelable {
         dest.writeString(this.country);
     }
 
-    City(Parcel in) {
+    private City(Parcel in) {
         this.id = in.readInt();
         this.name = in.readString();
         this.country = in.readString();
