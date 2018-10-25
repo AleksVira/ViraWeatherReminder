@@ -28,6 +28,7 @@ import ru.virarnd.viraweatherreminder.common.MyApp;
 public class CreateNewNotificationFragment extends Fragment {
 
     private final static String TAG = CreateNewNotificationFragment.class.getName();
+    public static final String FILL_THIS_FIELD = "Заполните это поле";
 
     private OnNewNotificationInteractionListener newNotificationListener;
 
@@ -107,13 +108,23 @@ public class CreateNewNotificationFragment extends Fragment {
     }
 
     public void setEventDate(Calendar calendar) {
+//        getNewNotificationDate();
         String myFormat = "dd.MM.yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
         tiEventDate.setText(sdf.format(calendar.getTime()));
         newNotificationDate.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
     }
 
+/*
+    private void getNewNotificationDate() {
+        if (newNotificationDate == null) {
+            newNotificationDate = (GregorianCalendar) Calendar.getInstance();
+        }
+    }
+*/
+
     public void setEventTime(Calendar time) {
+//        getNewNotificationDate();
         String output = String.format("%02d:%02d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE));
         tiEventTime.setText(output);
         newNotificationDate.set(Calendar.HOUR_OF_DAY, time.get(Calendar.HOUR_OF_DAY));
@@ -123,8 +134,7 @@ public class CreateNewNotificationFragment extends Fragment {
     public void setTimer(Calendar time) {
         String output = String.format("%2d:%02d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE));
         tiTimer.setText(output);
-        // TODO Корректно обработать ввод времени срабатывания таймера: установить новую дату и время раньше на величину указанную в таймере
-        // Установить время срабатывания, отнять часы/минуты от времени newNotificationDate
+        // Корректно обрабатываю ввод времени срабатывания таймера: установить новую дату и время раньше на величину указанную в таймере
         newCheckNotificationTime = (GregorianCalendar) newNotificationDate.clone();
         newCheckNotificationTime.add(Calendar.HOUR_OF_DAY, -time.get(Calendar.HOUR_OF_DAY));
         newCheckNotificationTime.add(Calendar.MINUTE, -time.get(Calendar.MINUTE));
@@ -266,9 +276,29 @@ public class CreateNewNotificationFragment extends Fragment {
                     newNotificationListener.askTimerFromDialog();
                     break;
                 case (R.id.btCreate):
-                    newNotificationListener.createNewNotification(newNotificationName, newNotificationCity, newNotificationDate, newCheckNotificationTime);
+                    if (newNotificationName != null && newNotificationCity != null && !tiEventDate.getText().toString().equals("") && !tiEventTime.getText().toString().equals("") && newCheckNotificationTime != null) {
+                        newNotificationListener.createNewNotification(newNotificationName, newNotificationCity, newNotificationDate, newCheckNotificationTime);
+                    } else {
+                        findEmptyFiledAndShowError();
+                    }
                     break;
                 default:
+            }
+        }
+
+        private void findEmptyFiledAndShowError() {
+            if (newNotificationName == null) {
+                tiEventName.setError(FILL_THIS_FIELD);
+            } else if (newNotificationCity == null) {
+                acSelectCity.setError(FILL_THIS_FIELD);
+            } else if (tiEventDate.getText().toString().equals("")) {
+                tiEventDate.setError(FILL_THIS_FIELD);
+            } else if (tiEventTime.getText().toString().equals("")) {
+                tiEventTime.setError(FILL_THIS_FIELD);
+            } else if (newCheckNotificationTime == null) {
+                tiTimer.setError(FILL_THIS_FIELD);
+            } else {
+                Log.e(TAG, "Что-то забыл заполнить");
             }
         }
     }
@@ -280,7 +310,7 @@ public class CreateNewNotificationFragment extends Fragment {
             if (isRepeatNotification) {
                 showRepeatError();
             } else {
-                clearRepeatError();
+                clearError();
             }
         }
     }
@@ -293,11 +323,12 @@ public class CreateNewNotificationFragment extends Fragment {
         tiEventTime.setError(errorMessage);
     }
 
-    private void clearRepeatError() {
+    public void clearError() {
         acSelectCity.setError(null);
         tiEventName.setError(null);
         tiEventDate.setError(null);
         tiEventTime.setError(null);
+        tiTimer.setError(null);
     }
 
 
