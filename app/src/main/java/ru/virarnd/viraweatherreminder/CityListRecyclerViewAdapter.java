@@ -35,7 +35,6 @@ public class CityListRecyclerViewAdapter extends RecyclerView.Adapter<CityListRe
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.mItem = cities.get(position);
-//        holder.mIdView.setText(cities.get(position).id);
         holder.mContentView.setText(cities.get(position).getName());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -44,16 +43,15 @@ public class CityListRecyclerViewAdapter extends RecyclerView.Adapter<CityListRe
                 Log.d(TAG, "Выбран город " + holder.mItem.getName());
                 Log.d(TAG, "ID = " + holder.mItem.getId());
                 mListener.onFragmentInteraction(holder.mItem.getId());
-//                mPresenter.setCityAndShowDetail(holder.mItem);
                 row_index = holder.getAdapterPosition();
                 notifyDataSetChanged();
             }
         });
 
         if (row_index == position) {
-            holder.mView.setBackgroundColor(holder.mView.getContext().getResources().getColor(R.color.colorPrimary));
+            holder.mView.setBackgroundColor(holder.mView.getContext().getResources().getColor(R.color.color_primary));
         } else {
-            holder.mView.setBackgroundColor(holder.mView.getContext().getResources().getColor(R.color.primaryLight));
+            holder.mView.setBackgroundColor(holder.mView.getContext().getResources().getColor(R.color.primary_light));
         }
 
     }

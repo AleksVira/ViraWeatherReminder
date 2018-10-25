@@ -1,12 +1,20 @@
 package ru.virarnd.viraweatherreminder;
 
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
 
 import java.util.ArrayList;
@@ -33,7 +41,7 @@ import static ru.virarnd.viraweatherreminder.WeatherPresenter.TEMPERATURE_F;
 import static ru.virarnd.viraweatherreminder.WeatherPresenter.WIND_SPEED_MH;
 import static ru.virarnd.viraweatherreminder.WeatherPresenter.WIND_SPEED_MS;
 
-public class FirstActivity extends AppCompatActivity implements CityListFragment.OnCityListFragmentInteractionListener,
+public class FirstActivity extends AppCompatActivity implements CityListFragment.OnCityListFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener,
         NotificationsFragment.OnListFragmentInteractionListener,
         ForecastFragment.OnForecastFragmentInteractionListener,
         HistoryForecastFragment.OnListFragmentInteractionListener,
@@ -51,7 +59,6 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     private NotificationsFragment notificationsFragment;
 
     private CreateNewNotificationFragment createNewNotificationFragment;
-    //    private ForecastFragment forecastFragment;
     private WeatherPresenter weatherPresenter;
 
     @Override
@@ -61,6 +68,23 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
 
         weatherPresenter = WeatherPresenter.getInstance();
         weatherPresenter.attachView(this);
+
+        Toolbar toolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+        };
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         if (savedInstanceState == null) {
             Bundle bundle = new Bundle();
@@ -75,6 +99,34 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
             transaction.add(R.id.mainFrame, cityListFragment);
             transaction.commit();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.base_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_show_notifications:
+                weatherPresenter.openNotificationsFragment();
+                break;
+            case R.id.action_settings:
+                weatherPresenter.openSettingsFragment();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START))
+            drawer.closeDrawer(GravityCompat.START);
+        else
+            super.onBackPressed();
     }
 
     @Override
@@ -279,5 +331,23 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
         // Закрываю фрагмент "Создать новое уведомление" и обновляю список уведомлений.
         notificationsFragment.getMyNotificationsRecyclerViewAdapter().notifyDataSetChanged();
         getSupportFragmentManager().popBackStack();;
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.nav_settings) {
+//            if (!bottomFrameIsHidden) {
+//                showSettingsFragment();
+//            }
+        } else if (id == R.id.nav_about) {
+//            showAboutFragment();
+        } else if (id == R.id.nav_feedback) {
+//            showFeedbackFragment();
+        }
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

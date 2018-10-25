@@ -24,8 +24,13 @@
     <string name="check_date">Check time</string>
     <string name="Events">Events</string>
     <string name="history">History</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="select_new_city">Select new city</string>
+    <string name="nav_header_title">Petrov Aleksey</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="feedback_form">Feedback form</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
 
 </resources>

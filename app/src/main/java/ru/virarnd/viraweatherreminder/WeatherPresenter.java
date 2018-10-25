@@ -119,10 +119,19 @@ class WeatherPresenter {
 
     void sendButtonPressed(int buttonId) {
         if (buttonId == R.id.btNotifications) {
-            notificationList = model.getNotificationsList();
-            activity.showNotifications(notificationList);
+            openNotificationsFragment();
         }
     }
+
+    void openNotificationsFragment() {
+        notificationList = model.getNotificationsList();
+        activity.showNotifications(notificationList);
+    }
+
+    void openSettingsFragment() {
+        // TODO Добавить новый фрагмент "Настройки"
+    }
+
 
     void sendButtonPressedAndCityId(int buttonId, int cityId) {
         if (buttonId == R.id.btHistory) {
@@ -157,4 +166,5 @@ class WeatherPresenter {
         notificationList.add(newNotification);
         activity.closeCreationFragment();
     }
+
 }

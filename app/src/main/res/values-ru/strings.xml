@@ -26,5 +26,12 @@
     <string name="Events">Уведомления</string>
     <string name="history">История</string>
     <string name="select_new_city">Выбрать новый город</string>
+    <string name="nav_header_title">Петров Алексей</string>
+    <string name="settings">Настройки</string>
+    <string name="about">О приложении</string>
+    <string name="feedback_form">Feedback form</string>
+    <string name="navigation_drawer_open">Открыть панель навигации</string>
+    <string name="navigation_drawer_close">Закрыть панель навигации</string>
+
 
 </resources>
