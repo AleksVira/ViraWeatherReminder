@@ -29,7 +29,8 @@ public class MyNotificationsRecyclerViewAdapter extends RecyclerView.Adapter<MyN
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_notifications_item, parent, false);
+//        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_notifications_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view_fragment_notifications_item, parent, false);
         return new ViewHolder(view);
     }
 
