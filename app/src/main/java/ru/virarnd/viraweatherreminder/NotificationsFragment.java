@@ -15,6 +15,9 @@ import ru.virarnd.viraweatherreminder.common.Notification;
 import java.util.ArrayList;
 
 public class NotificationsFragment extends Fragment {
+
+    public final static String TAG = NotificationsFragment.class.getName();
+
     public final static String NOTIFICATIONS_LIST = "HL1MJC5H";
 
     private OnListFragmentInteractionListener mListener;

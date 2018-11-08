@@ -1,5 +1,12 @@
 package ru.virarnd.viraweatherreminder;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -12,18 +19,38 @@ import ru.virarnd.viraweatherreminder.common.MyApp;
 import ru.virarnd.viraweatherreminder.common.Notification;
 import ru.virarnd.viraweatherreminder.common.Settings;
 
+import static ru.virarnd.viraweatherreminder.common.AskOpenWeatherService.DAILY_FORECAST;
+import static ru.virarnd.viraweatherreminder.common.AskOpenWeatherService.INTENT_RESULT;
+
 public class Model {
 
     private final static String TAG = Model.class.getName();
 
+    private static Model instance;
     private Settings settings;
     private final ForecastManager forecastManager;
-    private static Model instance;
     private ArrayList<Notification> notifications;
+//    private LocalBroadcastManager localBroadcastManager;
+//    private BroadcastReceiver broadcastReceiver;
 
     private Model() {
         this.forecastManager = new ForecastManager();
         this.settings = Settings.getInstance();
+/*
+        this.localBroadcastManager = LocalBroadcastManager.getInstance(MyApp.getContext());
+        this.broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(TAG, "Got service result!");
+                if (intent != null && intent.getExtras().containsKey(DAILY_FORECAST)) {
+                    DailyForecast dailyForecast = intent.getParcelableExtra(DAILY_FORECAST);
+                    onCurrentForecastUpdate(dailyForecast);
+                }
+            }
+        };
+
+        localBroadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(INTENT_RESULT));
+*/
 
         // TODO Позже настройки будут считываться из сохраненных данных
         this.settings = settings.defaultSettings();
@@ -78,7 +105,7 @@ public class Model {
 
     ArrayList<City> getLastUsedCityListWithSelectNew() {
         ArrayList<City> cities = getLastUsedCityList();
-        cities.add(new City(0, MyApp.getAppContext().getString(R.string.select_new_city)));
+        cities.add(new City(0, MyApp.getContext().getString(R.string.select_new_city)));
         return cities;
     }
 
@@ -151,4 +178,8 @@ public class Model {
     }
 
 
+    public interface OnDailyForecastUpdate {
+        void onCurrentForecastUpdate(DailyForecast forecast);
+
+    }
 }

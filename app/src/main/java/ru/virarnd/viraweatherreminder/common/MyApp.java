@@ -6,15 +6,27 @@ import android.content.res.Resources;
 
 public class MyApp extends Application {
 
-    private static Context context;
+    private static MyApp instance;
 
     @Override
     public void onCreate() {
+        instance = this;
         super.onCreate();
-        MyApp.context = getApplicationContext();
     }
 
-    public static Context getAppContext() {
-        return MyApp.context;
+    public static Context getContext(){
+//        return instance;
+         return instance.getApplicationContext();
     }
+
+/*
+    public static MyApp getInstance() {
+        if (instance == null) {
+            instance = new MyApp();
+        }
+        return instance;
+    }
+*/
 }
+
+

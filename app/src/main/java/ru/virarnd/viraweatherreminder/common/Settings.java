@@ -6,8 +6,6 @@ import ru.virarnd.viraweatherreminder.R;
 
 public class Settings {
 
-    private Context context = MyApp.getAppContext();
-
     // Настройки параметров отображения подробного прогноза
     private boolean isTemperatureVisible = true;
     private boolean isWindSpeedVisible;
@@ -95,11 +93,12 @@ public class Settings {
         isPressureVisible = true;
         isHumidityVisible = true;
 
-        temperatureUnit = context.getString(R.string.celcius);
-        windSpeedUnit = context.getString(R.string.speed_ms);
-//        pressureUnit = context.getString(R.string.pressure_mm);
-        pressureUnit = context.getString(R.string.pressure_mb);
-        humidityUnit = context.getString(R.string.percents);
+        temperatureUnit = MyApp.getContext().getString(R.string.celcius);
+        temperatureUnit = MyApp.getContext().getString(R.string.celcius);
+        windSpeedUnit = MyApp.getContext().getString(R.string.speed_ms);
+//        pressureUnit = MyApp.getContext().getString(R.string.pressure_mm);
+        pressureUnit = MyApp.getContext().getString(R.string.pressure_mb);
+        humidityUnit = MyApp.getContext().getString(R.string.percents);
 
         return defaultSettings;
     }

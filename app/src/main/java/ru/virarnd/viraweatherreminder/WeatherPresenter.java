@@ -1,15 +1,28 @@
 package ru.virarnd.viraweatherreminder;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 import ru.virarnd.viraweatherreminder.common.City;
 import ru.virarnd.viraweatherreminder.common.DailyForecast;
 import ru.virarnd.viraweatherreminder.common.ForecastHistory;
+import ru.virarnd.viraweatherreminder.common.MyApp;
 import ru.virarnd.viraweatherreminder.common.Notification;
 import ru.virarnd.viraweatherreminder.common.Settings;
 
+import static ru.virarnd.viraweatherreminder.common.AskOpenWeatherService.DAILY_FORECAST;
+import static ru.virarnd.viraweatherreminder.common.AskOpenWeatherService.INTENT_RESULT;
+
 class WeatherPresenter {
+
+    private final static String TAG = WeatherPresenter.class.getName();
 
     // TODO Сейчас все команды передаются отдельно. Можно ли это улучшить? Через какой-то интерфейс или другой класс...
     // Чтобы можно было подключить другой View с таким же набором команд. Или оставить как есть?
@@ -32,10 +45,13 @@ class WeatherPresenter {
 
 
     private static WeatherPresenter instance = null;
-    private FirstActivity activity;
+    private FirstActivity firstActivity;
     private Settings settings = Settings.getInstance();
     private final Model model = Model.getInstance();
     private ArrayList<Notification> notificationList;
+
+    private LocalBroadcastManager localBroadcastManager;
+    private BroadcastReceiver broadcastReceiver;
 
     private WeatherPresenter() {
     }
@@ -59,19 +75,40 @@ class WeatherPresenter {
     void setCityAndShowDetail(int cityId) {
         if (cityId != 0) {
             DailyForecast cityDailyForecast = model.getForecastByCityId(cityId);
-            activity.showForecast(cityDailyForecast);
+            firstActivity.showForecast(cityId, cityDailyForecast);
         }
     }
 
-    void attachView(FirstActivity firstActivity) {
-        activity = firstActivity;
+    void attachMainView(FirstActivity firstActivity) {
+        this.firstActivity = firstActivity;
+        localBroadcastManager = LocalBroadcastManager.getInstance(MyApp.getContext());
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(TAG, "Got service result!");
+                if (intent != null && intent.getExtras().containsKey(DAILY_FORECAST)) {
+                    DailyForecast dailyForecast = intent.getParcelableExtra(DAILY_FORECAST);
+                    WeatherPresenter.this.firstActivity.tryUpdateCurrentForecast(dailyForecast);
+                }
+            }
+        };
+        localBroadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(INTENT_RESULT));
+
     }
 
-    void detachView() {
-        if (activity != null) {
-            activity = null;
+    void detachMainView() {
+        localBroadcastManager.unregisterReceiver(broadcastReceiver);
+        if (firstActivity != null) {
+            firstActivity = null;
         }
     }
+
+    void attachSettingsView(SettingsActivity settingsActivity) {
+
+
+    }
+
+
 
 
     public void sendCheckBoxState(int condition) {
@@ -95,22 +132,22 @@ class WeatherPresenter {
                 settings.setHumidityVisible(false);
                 break;
             case TEMPERATURE_C:
-                settings.setTemperatureUnit(activity.getApplicationContext().getString(R.string.celcius));
+                settings.setTemperatureUnit(firstActivity.getApplicationContext().getString(R.string.celcius));
                 break;
             case TEMPERATURE_F:
-                settings.setTemperatureUnit(activity.getApplicationContext().getString(R.string.fahrenheit));
+                settings.setTemperatureUnit(firstActivity.getApplicationContext().getString(R.string.fahrenheit));
                 break;
             case WIND_SPEED_MS:
-                settings.setWindSpeedUnit(activity.getApplicationContext().getString(R.string.speed_ms));
+                settings.setWindSpeedUnit(firstActivity.getApplicationContext().getString(R.string.speed_ms));
                 break;
             case WIND_SPEED_MH:
-                settings.setWindSpeedUnit(activity.getApplicationContext().getString(R.string.speed_miles_hour));
+                settings.setWindSpeedUnit(firstActivity.getApplicationContext().getString(R.string.speed_miles_hour));
                 break;
             case PRESSURE_MM:
-                settings.setPressureUnit(activity.getApplicationContext().getString(R.string.pressure_mm));
+                settings.setPressureUnit(firstActivity.getApplicationContext().getString(R.string.pressure_mm));
                 break;
             case PRESSURE_MBAR:
-                settings.setPressureUnit(activity.getApplicationContext().getString(R.string.pressure_mb));
+                settings.setPressureUnit(firstActivity.getApplicationContext().getString(R.string.pressure_mb));
                 break;
             default:
                 break;
@@ -125,7 +162,7 @@ class WeatherPresenter {
 
     void openNotificationsFragment() {
         notificationList = model.getNotificationsList();
-        activity.showNotifications(notificationList);
+        firstActivity.showNotifications(notificationList);
     }
 
     void openSettingsFragment() {
@@ -135,7 +172,7 @@ class WeatherPresenter {
 
     void sendButtonPressedAndCityId(int buttonId, int cityId) {
         if (buttonId == R.id.btHistory) {
-            activity.showHistoryForecast(cityId);
+            firstActivity.showHistoryForecast(cityId);
         }
     }
 
@@ -144,7 +181,7 @@ class WeatherPresenter {
     }
 
     void sendNewNotificationFabClicked() {
-        activity.showCreateNewNotificationFragment();
+        firstActivity.showCreateNewNotificationFragment();
     }
 
     City askPresenterCityByName(String cityName) {
@@ -164,7 +201,14 @@ class WeatherPresenter {
     public void addNewNotification(String newNotificationName, City newNotificationCity, GregorianCalendar newNotificationDate, GregorianCalendar newCheckNotificationTime) {
         Notification newNotification = new Notification(newNotificationName, newNotificationCity, newNotificationDate, newCheckNotificationTime);
         notificationList.add(newNotification);
-        activity.closeCreationFragment();
+        firstActivity.closeCreationFragment();
     }
+
+/*
+    @Override
+    public void onCurrentForecastUpdate(DailyForecast forecast) {
+        firstActivity.tryUpdateCurrentForecast(forecast);
+    }
+*/
 
 }

@@ -17,6 +17,8 @@ import ru.virarnd.viraweatherreminder.common.ForecastHistory;
 
 public class HistoryForecastFragment extends Fragment {
 
+    public final static String TAG = HistoryForecastFragment.class.getName();
+
     private static final String HISTORY_CITY_ID = "BTHS8BSI";
     private OnListFragmentInteractionListener historyListener;
     private ForecastHistory forecastHistory;

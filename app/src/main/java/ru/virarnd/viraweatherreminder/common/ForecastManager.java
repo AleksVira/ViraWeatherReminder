@@ -7,7 +7,8 @@ public class ForecastManager {
     private Stack<String> lastUsedCities;                   // Стэк для хранения последних использованных городов, размер 5
 
     public ForecastManager() {
-        weatherDataRequester = new SimpleWeatherDataStorage();
+        weatherDataRequester = new OpenWeatherForecastRequester();
+//        weatherDataRequester = new SimpleWeatherDataStorage();
         lastUsedCities = new Stack<>();
         lastUsedCities.setSize(5);
     }
@@ -37,5 +38,9 @@ public class ForecastManager {
 
     public DailyForecast getCurrentForecastById(int cityId) {
         return weatherDataRequester.getCurrentForecast(cityId);
+    }
+
+    public void gotNewForecast(DailyForecast dailyForecast) {
+
     }
 }

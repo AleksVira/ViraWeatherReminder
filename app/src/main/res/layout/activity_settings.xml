@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SettingsActivity">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineVerticalCheckBoxes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.38" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineVerticalSwitches"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.70" />
+
+    <TextView
+        android:id="@+id/tvSettingsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/what_and_how_to_show"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/cbTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:checked="true"
+        android:clickable="false"
+        android:layoutDirection="rtl"
+        android:text="@string/temperature"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineVerticalCheckBoxes"
+        app:layout_constraintTop_toBottomOf="@+id/tvSettingsLabel" />
+
+    <CheckBox
+        android:id="@+id/cbWind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layoutDirection="rtl"
+        android:text="@string/wind"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineVerticalCheckBoxes"
+        app:layout_constraintTop_toBottomOf="@+id/cbTemperature" />
+
+    <CheckBox
+        android:id="@+id/cbPressure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layoutDirection="rtl"
+        android:text="@string/pressure"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineVerticalCheckBoxes"
+        app:layout_constraintTop_toBottomOf="@+id/cbWind" />
+
+    <CheckBox
+        android:id="@+id/cbHumidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layoutDirection="rtl"
+        android:text="@string/humidity"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineVerticalCheckBoxes"
+        app:layout_constraintTop_toBottomOf="@+id/cbPressure" />
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/swTemp"
+        android:layout_width="@dimen/switch_length"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/cbTemperature"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guidelineVerticalCheckBoxes"
+        app:layout_constraintTop_toTopOf="@+id/cbTemperature"
+        app:switchMinWidth="@dimen/switch_length" />
+
+    <TextView
+        android:id="@+id/tv_temp_C"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/celcius"
+        app:layout_constraintBottom_toBottomOf="@+id/swTemp"
+        app:layout_constraintEnd_toStartOf="@+id/swTemp"
+        app:layout_constraintTop_toTopOf="@+id/swTemp" />
+
+    <TextView
+        android:id="@+id/tv_temp_F"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/fahrenheit"
+        app:layout_constraintBottom_toBottomOf="@+id/swTemp"
+        app:layout_constraintStart_toEndOf="@+id/swTemp"
+        app:layout_constraintTop_toTopOf="@+id/swTemp" />
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/swWind"
+        android:layout_width="@dimen/switch_length"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/cbWind"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guidelineVerticalCheckBoxes"
+        app:layout_constraintTop_toTopOf="@+id/cbWind"
+        app:switchMinWidth="@dimen/switch_length" />
+
+    <TextView
+        android:id="@+id/tv_speed_ms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/speed_ms"
+        app:layout_constraintBottom_toBottomOf="@+id/swWind"
+        app:layout_constraintEnd_toStartOf="@+id/swWind"
+        app:layout_constraintTop_toTopOf="@+id/swWind" />
+
+    <TextView
+        android:id="@+id/tv_temp_speed_miles_h"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/speed_miles_hour"
+        app:layout_constraintBottom_toBottomOf="@+id/swWind"
+        app:layout_constraintStart_toEndOf="@+id/swWind"
+        app:layout_constraintTop_toTopOf="@+id/swWind" />
+
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/swPressure"
+        android:layout_width="@dimen/switch_length"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/cbPressure"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guidelineVerticalCheckBoxes"
+        app:layout_constraintTop_toTopOf="@+id/cbPressure"
+        app:switchMinWidth="@dimen/switch_length" />
+
+    <TextView
+        android:id="@+id/tv_pressure_mm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/pressure_mm"
+        app:layout_constraintBottom_toBottomOf="@+id/swPressure"
+        app:layout_constraintEnd_toStartOf="@+id/swPressure"
+        app:layout_constraintTop_toTopOf="@+id/swPressure" />
+
+    <TextView
+        android:id="@+id/tv_pressure_mb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/pressure_mb"
+        app:layout_constraintBottom_toBottomOf="@+id/swPressure"
+        app:layout_constraintStart_toEndOf="@+id/swPressure"
+        app:layout_constraintTop_toTopOf="@+id/swPressure" />
+
+
+</android.support.constraint.ConstraintLayout>

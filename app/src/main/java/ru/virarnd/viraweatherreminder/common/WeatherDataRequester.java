@@ -3,7 +3,7 @@ package ru.virarnd.viraweatherreminder.common;
 import java.util.ArrayList;
 import java.util.Date;
 
-interface WeatherDataRequester {
+public interface WeatherDataRequester {
 
     DailyForecast getCurrentForecast(int Id);
 

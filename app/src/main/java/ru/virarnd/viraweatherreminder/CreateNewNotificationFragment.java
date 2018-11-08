@@ -28,7 +28,7 @@ import ru.virarnd.viraweatherreminder.common.MyApp;
 
 public class CreateNewNotificationFragment extends Fragment {
 
-    private final static String TAG = CreateNewNotificationFragment.class.getName();
+    public final static String TAG = CreateNewNotificationFragment.class.getName();
     public static final String FILL_THIS_FIELD = "Заполните это поле";
 
     private OnNewNotificationInteractionListener newNotificationListener;
@@ -76,7 +76,7 @@ public class CreateNewNotificationFragment extends Fragment {
         acSelectCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (parent.getItemAtPosition(position).equals(MyApp.getAppContext().getString(R.string.select_new_city))) {
+                if (parent.getItemAtPosition(position).equals(MyApp.getContext().getString(R.string.select_new_city))) {
                     // TODO Пока выбрать новый город невозможно, но это будет делаться тут
                     showErrorSelectAnotherCity();
                 }

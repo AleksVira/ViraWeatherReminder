@@ -91,9 +91,9 @@ public class CityListFragment extends Fragment {
         swPressure = view.findViewById(R.id.swPressure);
         tvPressureUnitMm = view.findViewById(R.id.tv_pressure_mm);
         tvPressureUnitMbar = view.findViewById(R.id.tv_pressure_mb);
-        swTemp.setChecked(swTemperatureUnit.equals(MyApp.getAppContext().getString(R.string.fahrenheit)));
-        swWindSpeed.setChecked(swWindSpeedUnit.equals(MyApp.getAppContext().getString(R.string.speed_miles_hour)));
-        swPressure.setChecked(swPressureSUnit.equals(MyApp.getAppContext().getString(R.string.pressure_mb)));
+        swTemp.setChecked(swTemperatureUnit.equals(MyApp.getContext().getApplicationContext().getString(R.string.fahrenheit)));
+        swWindSpeed.setChecked(swWindSpeedUnit.equals(MyApp.getContext().getApplicationContext().getString(R.string.speed_miles_hour)));
+        swPressure.setChecked(swPressureSUnit.equals(MyApp.getContext().getApplicationContext().getString(R.string.pressure_mb)));
 
         // Каждому элементу настроек -- по слушателю
         cbWindSpeed.setOnCheckedChangeListener(new CheckBoxAndSwitchListener());

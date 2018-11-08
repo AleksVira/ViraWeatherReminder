@@ -1,8 +1,8 @@
 package ru.virarnd.viraweatherreminder;
 
+import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -54,6 +54,7 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     private final static String TAG = FirstActivity.class.getName();
     public final static String PARCEL = "RM46";
     public final static String FORECAST = "XN7A";
+    public final static String CITY_ID = "LDE0S";
 
     private CityListFragment cityListFragment;
     private NotificationsFragment notificationsFragment;
@@ -61,13 +62,28 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     private CreateNewNotificationFragment createNewNotificationFragment;
     private WeatherPresenter weatherPresenter;
 
+/*
+    @Override
+    protected void onResume() {
+        super.onResume();
+        weatherPresenter = WeatherPresenter.getInstance();
+        weatherPresenter.attachMainView(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        weatherPresenter.detachMainView();
+    }
+*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first);
 
         weatherPresenter = WeatherPresenter.getInstance();
-        weatherPresenter.attachView(this);
+        weatherPresenter.attachMainView(this);
 
         Toolbar toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
@@ -131,7 +147,7 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
 
     @Override
     protected void onDestroy() {
-        weatherPresenter.detachView();
+        weatherPresenter.detachMainView();
         super.onDestroy();
     }
 
@@ -187,48 +203,40 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     }
 
 
-    public void showForecast(DailyForecast cityDailyForecast) {
-        ForecastFragment forecastFragment = ForecastFragment.newInstance(cityDailyForecast);
-        String tag = getTag(forecastFragment);
+    public void showForecast(int cityId, DailyForecast cityDailyForecast) {
+        ForecastFragment forecastFragment = ForecastFragment.newInstance(cityId, cityDailyForecast);
         if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, forecastFragment, tag).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, forecastFragment, ForecastFragment.TAG).commit();
         } else {
-            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, forecastFragment).addToBackStack(tag).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, forecastFragment, ForecastFragment.TAG).addToBackStack(ForecastFragment.TAG).commit();
         }
     }
 
     public void showNotifications(ArrayList<Notification> notificationList) {
         notificationsFragment = NotificationsFragment.newInstance(notificationList);
-        String tag = getTag(notificationsFragment);
         if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, notificationsFragment, tag).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, notificationsFragment, NotificationsFragment.TAG).commit();
         } else {
-            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, notificationsFragment).addToBackStack(tag).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, notificationsFragment, NotificationsFragment.TAG).addToBackStack(NotificationsFragment.TAG).commit();
         }
     }
 
     public void showHistoryForecast(int cityId) {
         HistoryForecastFragment historyForecastFragment = HistoryForecastFragment.newInstance(cityId);
-        String tag = getTag(historyForecastFragment);
         if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, historyForecastFragment).addToBackStack(tag).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, historyForecastFragment, HistoryForecastFragment.TAG).addToBackStack(HistoryForecastFragment.TAG).commit();
         } else {
-            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, historyForecastFragment).addToBackStack(tag).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, historyForecastFragment, HistoryForecastFragment.TAG).addToBackStack(HistoryForecastFragment.TAG).commit();
         }
     }
 
     public void showCreateNewNotificationFragment() {
         createNewNotificationFragment = CreateNewNotificationFragment.newInstance();
-        String tag = getTag(createNewNotificationFragment);
         if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, createNewNotificationFragment).addToBackStack(tag).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, createNewNotificationFragment, CreateNewNotificationFragment.TAG).addToBackStack(CreateNewNotificationFragment.TAG).commit();
         } else {
-            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, createNewNotificationFragment).addToBackStack(tag).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.mainFrame, createNewNotificationFragment, CreateNewNotificationFragment.TAG).addToBackStack(CreateNewNotificationFragment.TAG).commit();
         }
-    }
-
-    private static String getTag(Fragment fragment) {
-        return fragment.getClass().getName();
     }
 
     // Запрашиваю историю прогноза за 5 дней, считая от текущего.
@@ -257,7 +265,7 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     @Override
     public City checkCityNameAndGetKnown(String candidate) {
         // TODO Пока буду показывать ошибку и прошу выбрать другой город, позже будет возможность выбрать новый город из тех что доступны (в т.ч. в интернете)
-        if (candidate.equals(MyApp.getAppContext().getString(R.string.select_new_city))) {
+        if (candidate.equals(MyApp.getContext().getString(R.string.select_new_city))) {
             createNewNotificationFragment.showErrorSelectAnotherCity();
             createNewNotificationFragment.clearCityNameField();
             return null;
@@ -336,18 +344,30 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.nav_settings) {
-//            if (!bottomFrameIsHidden) {
-//                showSettingsFragment();
-//            }
-        } else if (id == R.id.nav_about) {
+        switch (id) {
+            case R.id.nav_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.nav_about:
 //            showAboutFragment();
-        } else if (id == R.id.nav_feedback) {
+                break;
+            case R.id.nav_feedback:
 //            showFeedbackFragment();
+                break;
+            default:
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void tryUpdateCurrentForecast(DailyForecast dailyForecast) {
+        // TODO Проверить активен ли сейчас фрагмент ForecastFragment. Если да, отправить в него новый прогноз и показать его.
+        ForecastFragment testFragment = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(ForecastFragment.TAG);
+        if (testFragment != null && testFragment.isVisible()) {
+            testFragment.updateForecastData(dailyForecast);
+        }
     }
 }
