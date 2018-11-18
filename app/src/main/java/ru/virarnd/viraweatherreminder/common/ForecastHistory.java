@@ -2,12 +2,11 @@ package ru.virarnd.viraweatherreminder.common;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.TreeMap;
 
 public class ForecastHistory {
     private City city;
-    private TreeMap<GregorianCalendar, DailyForecast> forecastMap;
+    private TreeMap<GregorianCalendar, CurrentWeather> forecastMap;
 
     public ForecastHistory(City city) {
         this.city = city;
@@ -18,7 +17,7 @@ public class ForecastHistory {
         return city;
     }
 
-    public TreeMap<GregorianCalendar, DailyForecast> getForecastMap() {
+    public TreeMap<GregorianCalendar, CurrentWeather> getForecastMap() {
         return forecastMap;
     }
 

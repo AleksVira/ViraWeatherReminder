@@ -5,10 +5,10 @@ import java.util.Date;
 
 public interface WeatherDataRequester {
 
-    DailyForecast getCurrentForecast(int Id);
+    CurrentWeather askNewCurrentForecast(int Id);
 
-    DailyForecast getForecastByDate(int Id, Date date);
+    CurrentWeather getForecastByDate(int Id, Date date);
 
-    ArrayList<DailyForecast> getFiveDaysForecast(int Id);
+    ArrayList<CurrentWeather> getFiveDaysForecast(int Id);
 
 }

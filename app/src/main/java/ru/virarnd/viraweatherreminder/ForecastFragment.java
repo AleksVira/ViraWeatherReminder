@@ -14,10 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import ru.virarnd.viraweatherreminder.common.DailyForecast;
+import com.squareup.picasso.Picasso;
+
+import ru.virarnd.viraweatherreminder.common.CurrentWeather;
 import ru.virarnd.viraweatherreminder.common.MyApp;
 import ru.virarnd.viraweatherreminder.common.Settings;
 
@@ -29,7 +32,7 @@ public class ForecastFragment extends Fragment {
 
     public final static String TAG = ForecastFragment.class.getName();
 
-    private DailyForecast dailyForecast;
+    private CurrentWeather currentWeather;
     private Settings settings;
     private OnForecastFragmentInteractionListener forecastFragmentListener;
     private Button btHistory;
@@ -46,6 +49,7 @@ public class ForecastFragment extends Fragment {
     private TextView tvHumidityLabel;
     private TextView tvDeviceTemperatureLabel;
     private TextView tvDeviceHumidityLabel;
+    private ImageView ivWeather;
     private boolean temperatureSensorIsPresent;
     private boolean humiditySensorIsPresent;
     private SensorManager sensorManager;
@@ -53,10 +57,10 @@ public class ForecastFragment extends Fragment {
     private Sensor sensorHumidity;
     private int currentCityId;
 
-    public static ForecastFragment newInstance(int cityId, DailyForecast dailyForecast) {
+    public static ForecastFragment newInstance(int cityId, CurrentWeather currentWeather) {
         ForecastFragment fragment = new ForecastFragment();
         Bundle arguments = new Bundle();
-        arguments.putParcelable(FORECAST, dailyForecast);
+        arguments.putParcelable(FORECAST, currentWeather);
         arguments.putInt(CITY_ID, cityId);
         fragment.setArguments(arguments);
         return fragment;
@@ -66,10 +70,10 @@ public class ForecastFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null && getArguments().containsKey(FORECAST)) {
-            dailyForecast = getArguments().getParcelable(FORECAST);
+            currentWeather = getArguments().getParcelable(FORECAST);
             currentCityId = getArguments().getInt(CITY_ID);
         }
-        settings = Settings.getInstance();
+        settings = Model.getInstance().loadCommonSharedPreferences();
     }
 
     @Override
@@ -89,12 +93,13 @@ public class ForecastFragment extends Fragment {
         tvDeviceTemperatureLabel = view.findViewById(R.id.label_device_temperature);
         tvDeviceHumidity = view.findViewById(R.id.tv_device_humidity);
         tvDeviceHumidityLabel = view.findViewById(R.id.label_device_humidity);
+        ivWeather = view.findViewById(R.id.ivWeather);
 
 
         // Если прогноз пока не пришел, ставлю прогноз-заглушку
-        if (dailyForecast == null) {
-            dailyForecast = new DailyForecast.Builder(currentCityId, "обновляется...")
-                    .dayTemp(0).nightTemp(0)
+        if (currentWeather == null) {
+            currentWeather = new CurrentWeather.Builder(currentCityId, "обновляется...")
+                    .nowTemp(0)
                     .windDirection(0).windSpeed(0)
                     .humidity(0)
                     .pressure(0)
@@ -102,8 +107,8 @@ public class ForecastFragment extends Fragment {
                     .build();
         }
 
-//        currentCityId = dailyForecast.getCity().getId();
-        updateForecastData(dailyForecast);
+//        currentCityId = currentWeather.getCity().getId();
+        updateForecastData(currentWeather);
 
         // Кнопка "История" и слушатель
         btHistory = view.findViewById(R.id.btHistory);
@@ -154,7 +159,7 @@ public class ForecastFragment extends Fragment {
         @Override
         public void onClick(View view) {
             if (view.getId() == R.id.btHistory) {
-                forecastFragmentListener.onForecastButtonClick(view.getId(), dailyForecast.getCity().getId());
+                forecastFragmentListener.onForecastButtonClick(view.getId(), currentWeather.getCity().getId());
             }
         }
     }
@@ -207,30 +212,36 @@ public class ForecastFragment extends Fragment {
         }
     };
 
-    public void updateForecastData(DailyForecast dailyForecast) {
-        if (currentCityId == dailyForecast.getCity().getId()) {
-            tvTownName.setText(dailyForecast.getCity().getName());
+    public void updateForecastData(CurrentWeather currentWeather) {
+        // Если показываемый сейчас город совпадает с тем, что пришёл в прогнозе -- обновить его на экране и сохранить его в БД
+
+        if (cityOnScreenIsTheSame(currentWeather)) {
+
+            String url = "http://openweathermap.org/img/w/" + currentWeather.getIcon() + ".png";
+            Picasso.with(MyApp.getContext()).load(url).into(ivWeather);
+
+            tvTownName.setText(currentWeather.getCity().getName());
             tvTempLabel.setText(MyApp.getContext().getString(R.string.t_c));
-            String tempLine = String.valueOf(dailyForecast.getDayTemp()) + " " + settings.getTemperatureUnit();
+            String tempLine = String.valueOf(currentWeather.getNowTemp()) + " " + settings.getTemperatureUnit();
             tvTemperature.setText(tempLine);
 
             // В зависимости от настроек, показываю или прячу параметры
             if (settings.isWindSpeedVisible()) {
-                String windLine = String.valueOf(dailyForecast.getWindSpeed()) + " " + settings.getWindSpeedUnit();
+                String windLine = String.valueOf(currentWeather.getWindSpeed()) + " " + settings.getWindSpeedUnit();
                 tvWind.setText(windLine);
             } else {
                 tvWindLabel.setVisibility(View.GONE);
                 tvWind.setVisibility(View.GONE);
             }
             if (settings.isPressureVisible()) {
-                String pressureLine = String.valueOf(dailyForecast.getPressure()) + " " + settings.getPressureUnit();
+                String pressureLine = String.valueOf(currentWeather.getPressure()) + " " + settings.getPressureUnit();
                 tvPressure.setText(pressureLine);
             } else {
                 tvPressureLabel.setVisibility(View.GONE);
                 tvPressure.setVisibility(View.GONE);
             }
             if (settings.isHumidityVisible()) {
-                String humidityLine = String.valueOf(dailyForecast.getHumidity()) + " " + settings.getHumidityUnit();
+                String humidityLine = String.valueOf(currentWeather.getHumidity()) + " " + settings.getHumidityUnit();
                 tvHumidity.setText(humidityLine);
             } else {
                 tvHumidityLabel.setVisibility(View.GONE);
@@ -239,6 +250,10 @@ public class ForecastFragment extends Fragment {
         } else {
             Log.d(TAG, "Получен прогноз для другого города, на экране не обновляю");
         }
+    }
+
+    public boolean cityOnScreenIsTheSame(CurrentWeather currentWeather) {
+        return currentCityId == currentWeather.getCity().getId();
     }
 
 

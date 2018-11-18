@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
-import ru.virarnd.viraweatherreminder.common.DailyForecast;
+import ru.virarnd.viraweatherreminder.common.CurrentWeather;
 import ru.virarnd.viraweatherreminder.common.ForecastHistory;
 
 public class HistoryForecastFragment extends Fragment {
@@ -77,6 +77,6 @@ public class HistoryForecastFragment extends Fragment {
     }
 
     public interface OnListFragmentInteractionListener {
-        void onHistoryListFragmentInteraction(DailyForecast item);
+        void onHistoryListFragmentInteraction(CurrentWeather item);
     }
 }

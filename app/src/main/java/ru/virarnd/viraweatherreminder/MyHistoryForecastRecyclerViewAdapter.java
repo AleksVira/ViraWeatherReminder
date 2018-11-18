@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import ru.virarnd.viraweatherreminder.HistoryForecastFragment.OnListFragmentInteractionListener;
-import ru.virarnd.viraweatherreminder.common.DailyForecast;
+import ru.virarnd.viraweatherreminder.common.CurrentWeather;
 import ru.virarnd.viraweatherreminder.common.ForecastHistory;
 
 import java.text.SimpleDateFormat;
@@ -19,7 +19,7 @@ public class MyHistoryForecastRecyclerViewAdapter extends RecyclerView.Adapter<M
 
     // TODO Адаптер слишком много знает про ForecastHistory, надо вынести в Presenter подготовку данных для адаптера
 
-    private final List<DailyForecast> mValues;
+    private final List<CurrentWeather> mValues;
     private final List<GregorianCalendar> mDates;
     private final OnListFragmentInteractionListener mListener;
 
@@ -37,11 +37,10 @@ public class MyHistoryForecastRecyclerViewAdapter extends RecyclerView.Adapter<M
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        DailyForecast mItem = mValues.get(position);
+        CurrentWeather mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).getCity().getName());
         holder.mContentView.setText(formattedDate(mDates.get(position)));
-        holder.tvDayTemp.setText(String.valueOf(mItem.getDayTemp()));
-        holder.tvNightTemp.setText(String.valueOf(mItem.getNightTemp()));
+        holder.tvNowTemp.setText(String.valueOf(mItem.getNowTemp()));
         holder.tvWindSpeed.setText(String.valueOf(mItem.getWindSpeed()));
         holder.tvPressure.setText(String.valueOf(mItem.getPressure()));
         holder.tvHumidity.setText(String.valueOf(mItem.getHumidity()));
@@ -70,12 +69,11 @@ public class MyHistoryForecastRecyclerViewAdapter extends RecyclerView.Adapter<M
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        DailyForecast mItem;
+        CurrentWeather mItem;
         final View mView;
         final TextView mIdView;
         final TextView mContentView;
-        final TextView tvDayTemp;
-        final TextView tvNightTemp;
+        final TextView tvNowTemp;
         final TextView tvWindSpeed;
         final TextView tvPressure;
         final TextView tvHumidity;
@@ -86,8 +84,7 @@ public class MyHistoryForecastRecyclerViewAdapter extends RecyclerView.Adapter<M
             mView = view;
             mIdView = view.findViewById(R.id.city_name);
             mContentView = view.findViewById(R.id.date);
-            tvDayTemp = view.findViewById(R.id.tvDayTemp);
-            tvNightTemp = view.findViewById(R.id.tvNightTemp);
+            tvNowTemp = view.findViewById(R.id.tvDayTemp);
             tvWindSpeed = view.findViewById(R.id.tvWindSpeed);
             tvPressure = view.findViewById(R.id.tvPressure);
             tvHumidity = view.findViewById(R.id.tvHumidity);

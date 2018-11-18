@@ -30,6 +30,7 @@ public class SettingsActivity extends AppCompatActivity {
     private final static String TAG = SettingsActivity.class.getName();
 
     private WeatherPresenter weatherPresenter;
+    private SettingsActivity settingsActivity;
 
     private boolean cbWindState;
     private boolean cbPressureState;
@@ -46,19 +47,29 @@ public class SettingsActivity extends AppCompatActivity {
     private TextView tvPressureUnitMm;
     private TextView tvPressureUnitMbar;
 
+    private Settings settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        settingsActivity = new SettingsActivity();
+
         weatherPresenter = WeatherPresenter.getInstance();
         weatherPresenter.attachSettingsView(this);
 
-        // TODO Добавить чтение в переменные сохраненного состояния Settings
-        // Пока считывать то, что есть по дефолту.
+        settings = weatherPresenter.loadSettings();
+//        Settings.getInstance().loadSettings();
 
-        Settings settings = Settings.getInstance();
+        // Если первый запуск, то беру Settings из SharedPreferences
+//        if (savedInstanceState == null) {
+//            settings = weatherPresenter.loadSettings();
+//        } else {
+//            settings = Settings.getInstance().loadSettings();
+//        }
+
+
         cbWindState = settings.isWindSpeedVisible();
         cbPressureState = settings.isPressureVisible();
         cbHumidityState = settings.isHumidityVisible();
@@ -104,6 +115,13 @@ public class SettingsActivity extends AppCompatActivity {
         checkWindGroup();
         checkPressureGroup();
     }
+
+    @Override
+    protected void onDestroy() {
+        weatherPresenter.detachSettingsView();
+        super.onDestroy();
+    }
+
 
     public void onCheckboxChanged(int boxId, boolean isChecked) {
         int condition = 0;
@@ -178,6 +196,23 @@ public class SettingsActivity extends AppCompatActivity {
             tvWindSpeedUnitMh.setVisibility(View.VISIBLE);
         }
     }
+
+/*
+    private Settings loadFromSharedPreferences() {
+        settings = Settings.getInstance();
+        SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
+
+        settings.setWindSpeedVisible(sharedPref.getBoolean("WindSpeedVisible", false));
+        settings.setPressureVisible(sharedPref.getBoolean("PressureState", false));
+        settings.setHumidityVisible(sharedPref.getBoolean("HumidityState", false));
+
+        settings.setTemperatureUnit(sharedPref.getString("TemperatureUnit", getApplicationContext().getString(R.string.celcius)));
+        settings.setWindSpeedUnit(sharedPref.getString("WindSpeedUnit", getApplicationContext().getString(R.string.speed_ms)));
+        settings.setPressureUnit(sharedPref.getString("PressureUnit", getApplicationContext().getString(R.string.pressure_mb)));
+
+        return settings;
+    }
+*/
 
 
 

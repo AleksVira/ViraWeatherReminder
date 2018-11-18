@@ -7,32 +7,26 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static ru.virarnd.viraweatherreminder.common.AskOpenWeatherService.ACTION_ASK_DAILY_FORECAST;
+import static ru.virarnd.viraweatherreminder.common.AskOpenWeatherService.ACTION_ASK_CURRENT_WEATHER;
 
-public class OpenWeatherForecastRequester implements WeatherDataRequester {
+public class WeatherForecastRequester implements WeatherDataRequester {
 
-    private final static String TAG = OpenWeatherForecastRequester.class.getName();
+    private final static String TAG = WeatherForecastRequester.class.getName();
 
     static final String ACTION_LABEL = "Action label";
     static final String CITY_ID = "CITY_ID";
 
     @Override
-    public DailyForecast getCurrentForecast(int Id) {
+    public CurrentWeather askNewCurrentForecast(int Id) {
         Context context = MyApp.getContext();
         Intent intent = new Intent(context, AskOpenWeatherService.class);
-        intent.putExtra(ACTION_LABEL, ACTION_ASK_DAILY_FORECAST);
+        intent.putExtra(ACTION_LABEL, ACTION_ASK_CURRENT_WEATHER);
         intent.putExtra(CITY_ID, Id);
         context.startService(intent);
         Log.d(TAG, "Запрос на погоду отправлен в сервис!");
-/*
-        DailyForecast spb1 = new DailyForecast.Builder(2, "Saint PetersburG")
-                .dayTemp(15).nightTemp(10)
-                .windDirection(6).windSpeed(6)
-                .humidity(95)
-                .pressure(966.06)
-                .weatherConditions(3)
-                .build();
-*/
+        // TODO Делать запрос к БД и брать оттуда старый "текущий" прогноз
+        // Запрос ушел на сервер, но могу возвращать данные из ранее сохраненных в БД, например.
+
         return null;
     }
 
@@ -49,12 +43,12 @@ public class OpenWeatherForecastRequester implements WeatherDataRequester {
     }
 
     @Override
-    public DailyForecast getForecastByDate(int Id, Date date) {
+    public CurrentWeather getForecastByDate(int Id, Date date) {
         return null;
     }
 
     @Override
-    public ArrayList<DailyForecast> getFiveDaysForecast(int Id) {
+    public ArrayList<CurrentWeather> getFiveDaysForecast(int Id) {
         return null;
     }
 

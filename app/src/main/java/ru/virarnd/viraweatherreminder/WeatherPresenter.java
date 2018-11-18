@@ -4,20 +4,26 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import ru.virarnd.viraweatherreminder.common.City;
-import ru.virarnd.viraweatherreminder.common.DailyForecast;
+import ru.virarnd.viraweatherreminder.common.CurrentWeather;
 import ru.virarnd.viraweatherreminder.common.ForecastHistory;
 import ru.virarnd.viraweatherreminder.common.MyApp;
 import ru.virarnd.viraweatherreminder.common.Notification;
 import ru.virarnd.viraweatherreminder.common.Settings;
 
-import static ru.virarnd.viraweatherreminder.common.AskOpenWeatherService.DAILY_FORECAST;
+import static android.content.Context.MODE_PRIVATE;
+import static ru.virarnd.viraweatherreminder.Model.SHARED_PREFERENCES_SETTINGS;
+import static ru.virarnd.viraweatherreminder.common.AskOpenWeatherService.CURRENT_FORECAST;
 import static ru.virarnd.viraweatherreminder.common.AskOpenWeatherService.INTENT_RESULT;
 
 class WeatherPresenter {
@@ -46,7 +52,8 @@ class WeatherPresenter {
 
     private static WeatherPresenter instance = null;
     private FirstActivity firstActivity;
-    private Settings settings = Settings.getInstance();
+    private SettingsActivity settingsActivity;
+    private final Settings settings = Settings.getInstance();
     private final Model model = Model.getInstance();
     private ArrayList<Notification> notificationList;
 
@@ -74,8 +81,8 @@ class WeatherPresenter {
 
     void setCityAndShowDetail(int cityId) {
         if (cityId != 0) {
-            DailyForecast cityDailyForecast = model.getForecastByCityId(cityId);
-            firstActivity.showForecast(cityId, cityDailyForecast);
+            CurrentWeather cityCurrentWeather = model.getForecastByCityId(cityId);
+            firstActivity.showForecast(cityId, cityCurrentWeather);
         }
     }
 
@@ -86,9 +93,13 @@ class WeatherPresenter {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(TAG, "Got service result!");
-                if (intent != null && intent.getExtras().containsKey(DAILY_FORECAST)) {
-                    DailyForecast dailyForecast = intent.getParcelableExtra(DAILY_FORECAST);
-                    WeatherPresenter.this.firstActivity.tryUpdateCurrentForecast(dailyForecast);
+                if (intent != null && intent.getExtras().containsKey(CURRENT_FORECAST)) {
+                    CurrentWeather currentWeather = intent.getParcelableExtra(CURRENT_FORECAST);
+                    WeatherPresenter.this.firstActivity.tryUpdateCurrentForecast(currentWeather);
+
+                    // Получаю сегодняшнюю дату в виде строки и обновляю в БД запись для этого города и этой даты
+                    String today = new SimpleDateFormat("yyyyMMdd", Locale.US).format(new Date());
+                    model.tryUpdateRecordInDb(currentWeather, today);
                 }
             }
         };
@@ -104,54 +115,74 @@ class WeatherPresenter {
     }
 
     void attachSettingsView(SettingsActivity settingsActivity) {
+        this.settingsActivity = settingsActivity;
+    }
 
-
+    void detachSettingsView() {
+        if (settingsActivity != null) {
+            settingsActivity = null;
+        }
     }
 
 
 
-
     public void sendCheckBoxState(int condition) {
+        SharedPreferences globalPreferences = MyApp.getContext().getSharedPreferences(SHARED_PREFERENCES_SETTINGS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = globalPreferences.edit();
+
         switch (condition) {
             case SHOW_WIND_SPEED_ON:
                 settings.setWindSpeedVisible(true);
+                editor.putBoolean("WindSpeedVisible", true);
                 break;
             case SHOW_WIND_SPEED_OFF:
                 settings.setWindSpeedVisible(false);
+                editor.putBoolean("WindSpeedVisible", false);
                 break;
             case SHOW_PRESSURE_ON:
                 settings.setPressureVisible(true);
+                editor.putBoolean("PressureState", true);
                 break;
             case SHOW_PRESSURE_OFF:
                 settings.setPressureVisible(false);
+                editor.putBoolean("PressureState", false);
                 break;
             case SHOW_HUMIDITY_ON:
                 settings.setHumidityVisible(true);
+                editor.putBoolean("HumidityState", true);
                 break;
             case SHOW_HUMIDITY_OFF:
                 settings.setHumidityVisible(false);
+                editor.putBoolean("HumidityState", false);
                 break;
             case TEMPERATURE_C:
-                settings.setTemperatureUnit(firstActivity.getApplicationContext().getString(R.string.celcius));
+                settings.setTemperatureUnit(MyApp.getContext().getString(R.string.celcius));
+                editor.putString("TemperatureUnit", MyApp.getContext().getString(R.string.celcius));
                 break;
             case TEMPERATURE_F:
-                settings.setTemperatureUnit(firstActivity.getApplicationContext().getString(R.string.fahrenheit));
+                settings.setTemperatureUnit(MyApp.getContext().getString(R.string.fahrenheit));
+                editor.putString("TemperatureUnit", MyApp.getContext().getString(R.string.fahrenheit));
                 break;
             case WIND_SPEED_MS:
-                settings.setWindSpeedUnit(firstActivity.getApplicationContext().getString(R.string.speed_ms));
+                settings.setWindSpeedUnit(MyApp.getContext().getString(R.string.speed_ms));
+                editor.putString("WindSpeedUnit", MyApp.getContext().getString(R.string.speed_ms));
                 break;
             case WIND_SPEED_MH:
-                settings.setWindSpeedUnit(firstActivity.getApplicationContext().getString(R.string.speed_miles_hour));
+                settings.setWindSpeedUnit(MyApp.getContext().getString(R.string.speed_miles_hour));
+                editor.putString("WindSpeedUnit", MyApp.getContext().getString(R.string.speed_miles_hour));
                 break;
             case PRESSURE_MM:
-                settings.setPressureUnit(firstActivity.getApplicationContext().getString(R.string.pressure_mm));
+                settings.setPressureUnit(MyApp.getContext().getString(R.string.pressure_mm));
+                editor.putString("PressureUnit", MyApp.getContext().getString(R.string.pressure_mm));
                 break;
             case PRESSURE_MBAR:
-                settings.setPressureUnit(firstActivity.getApplicationContext().getString(R.string.pressure_mb));
+                settings.setPressureUnit(MyApp.getContext().getString(R.string.pressure_mb));
+                editor.putString("PressureUnit", MyApp.getContext().getString(R.string.pressure_mb));
                 break;
             default:
                 break;
         }
+        editor.apply();
     }
 
     void sendButtonPressed(int buttonId) {
@@ -205,10 +236,13 @@ class WeatherPresenter {
     }
 
 /*
-    @Override
-    public void onCurrentForecastUpdate(DailyForecast forecast) {
-        firstActivity.tryUpdateCurrentForecast(forecast);
+    public Settings loadPrivateSettings(SettingsActivity settingsActivity) {
+        return model.loadSettingsFromSharedPreferences(settingsActivity);
     }
 */
+
+    public Settings loadSettings() {
+        return model.loadCommonSharedPreferences();
+    }
 
 }

@@ -22,24 +22,12 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import ru.virarnd.viraweatherreminder.common.City;
-import ru.virarnd.viraweatherreminder.common.DailyForecast;
+import ru.virarnd.viraweatherreminder.common.CurrentWeather;
 import ru.virarnd.viraweatherreminder.common.ForecastHistory;
 import ru.virarnd.viraweatherreminder.common.MyApp;
 import ru.virarnd.viraweatherreminder.common.Notification;
 
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
-import static ru.virarnd.viraweatherreminder.WeatherPresenter.PRESSURE_MBAR;
-import static ru.virarnd.viraweatherreminder.WeatherPresenter.PRESSURE_MM;
-import static ru.virarnd.viraweatherreminder.WeatherPresenter.SHOW_HUMIDITY_OFF;
-import static ru.virarnd.viraweatherreminder.WeatherPresenter.SHOW_HUMIDITY_ON;
-import static ru.virarnd.viraweatherreminder.WeatherPresenter.SHOW_PRESSURE_OFF;
-import static ru.virarnd.viraweatherreminder.WeatherPresenter.SHOW_PRESSURE_ON;
-import static ru.virarnd.viraweatherreminder.WeatherPresenter.SHOW_WIND_SPEED_OFF;
-import static ru.virarnd.viraweatherreminder.WeatherPresenter.SHOW_WIND_SPEED_ON;
-import static ru.virarnd.viraweatherreminder.WeatherPresenter.TEMPERATURE_C;
-import static ru.virarnd.viraweatherreminder.WeatherPresenter.TEMPERATURE_F;
-import static ru.virarnd.viraweatherreminder.WeatherPresenter.WIND_SPEED_MH;
-import static ru.virarnd.viraweatherreminder.WeatherPresenter.WIND_SPEED_MS;
 
 public class FirstActivity extends AppCompatActivity implements CityListFragment.OnCityListFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener,
         NotificationsFragment.OnListFragmentInteractionListener,
@@ -62,20 +50,6 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     private CreateNewNotificationFragment createNewNotificationFragment;
     private WeatherPresenter weatherPresenter;
 
-/*
-    @Override
-    protected void onResume() {
-        super.onResume();
-        weatherPresenter = WeatherPresenter.getInstance();
-        weatherPresenter.attachMainView(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        weatherPresenter.detachMainView();
-    }
-*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,36 +132,6 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     }
 
     @Override
-    public void onCheckboxChanged(int boxId, boolean isChecked) {
-        int condition = 0;
-        switch (boxId) {
-            case R.id.cbWind:
-                condition = isChecked ? SHOW_WIND_SPEED_ON : SHOW_WIND_SPEED_OFF;
-                break;
-            case R.id.cbPressure:
-                condition = isChecked ? SHOW_PRESSURE_ON : SHOW_PRESSURE_OFF;
-                break;
-            case R.id.cbHumidity:
-                condition = isChecked ? SHOW_HUMIDITY_ON : SHOW_HUMIDITY_OFF;
-                break;
-            case R.id.swTemp:
-                condition = isChecked ? TEMPERATURE_F : TEMPERATURE_C;
-                break;
-            case R.id.swWind:
-                condition = isChecked ? WIND_SPEED_MH : WIND_SPEED_MS;
-                break;
-            case R.id.swPressure:
-                condition = isChecked ? PRESSURE_MBAR : PRESSURE_MM;
-                break;
-            default:
-                Log.e(TAG, "Кнопка настроек не определена!");
-                break;
-        }
-        weatherPresenter.sendCheckBoxState(condition);
-
-    }
-
-    @Override
     public void onButtonClick(int buttonId) {
         weatherPresenter.sendButtonPressed(buttonId);
     }
@@ -203,8 +147,8 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     }
 
 
-    public void showForecast(int cityId, DailyForecast cityDailyForecast) {
-        ForecastFragment forecastFragment = ForecastFragment.newInstance(cityId, cityDailyForecast);
+    public void showForecast(int cityId, CurrentWeather cityCurrentWeather) {
+        ForecastFragment forecastFragment = ForecastFragment.newInstance(cityId, cityCurrentWeather);
         if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
             getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, forecastFragment, ForecastFragment.TAG).commit();
         } else {
@@ -250,7 +194,7 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     }
 
     @Override
-    public void onHistoryListFragmentInteraction(DailyForecast item) {
+    public void onHistoryListFragmentInteraction(CurrentWeather item) {
         //TODO Определить реакцию списка с историей погоды на нажатие элемента
     }
 
@@ -363,11 +307,14 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
         return true;
     }
 
-    public void tryUpdateCurrentForecast(DailyForecast dailyForecast) {
-        // TODO Проверить активен ли сейчас фрагмент ForecastFragment. Если да, отправить в него новый прогноз и показать его.
-        ForecastFragment testFragment = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(ForecastFragment.TAG);
-        if (testFragment != null && testFragment.isVisible()) {
-            testFragment.updateForecastData(dailyForecast);
+    public void tryUpdateCurrentForecast(CurrentWeather currentWeather) {
+        // Проверить активен ли сейчас фрагмент ForecastFragment. Если да, отправить в него новый прогноз и показать его.
+        ForecastFragment forecastFragment = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(ForecastFragment.TAG);
+        if (forecastFragment != null && forecastFragment.isVisible()) {
+            // Если на экране показан фрагмент с тем же самым городом, обновляю фрагмент
+            if (forecastFragment.cityOnScreenIsTheSame(currentWeather)) {
+                forecastFragment.updateForecastData(currentWeather);
+            }
         }
     }
 }

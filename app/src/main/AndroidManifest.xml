@@ -24,7 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- <activity android:name=".common.OpenWeatherForecastRequester"></activity> -->
+        <!-- <activity android:name=".common.WeatherForecastRequester"></activity> -->
 
         <service
             android:name=".common.AskOpenWeatherService"
