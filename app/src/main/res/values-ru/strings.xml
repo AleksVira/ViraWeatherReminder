@@ -32,6 +32,7 @@
     <string name="feedback_form">Feedback form</string>
     <string name="navigation_drawer_open">Открыть панель навигации</string>
     <string name="navigation_drawer_close">Закрыть панель навигации</string>
+    <string name="send_sms">Отправить СМС</string>
 
 
 </resources>

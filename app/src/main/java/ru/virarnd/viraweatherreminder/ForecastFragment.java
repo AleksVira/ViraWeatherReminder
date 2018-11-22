@@ -24,18 +24,18 @@ import ru.virarnd.viraweatherreminder.common.CurrentWeather;
 import ru.virarnd.viraweatherreminder.common.MyApp;
 import ru.virarnd.viraweatherreminder.common.Settings;
 
-import static ru.virarnd.viraweatherreminder.FirstActivity.CITY_ID;
-import static ru.virarnd.viraweatherreminder.FirstActivity.FORECAST;
-
-
 public class ForecastFragment extends Fragment {
 
     public final static String TAG = ForecastFragment.class.getName();
+    public final static String FORECAST = "XN7A";
+    public final static String CITY_ID = "LDE0S";
+    public final static String SMS_BUTTON_STATUS = "0YV0CDDKQ";
 
     private CurrentWeather currentWeather;
     private Settings settings;
     private OnForecastFragmentInteractionListener forecastFragmentListener;
     private Button btHistory;
+    private Button btSendSms;
     private TextView tvDeviceTemperature;
     private TextView tvDeviceHumidity;
     private TextView tvTownName;
@@ -52,16 +52,18 @@ public class ForecastFragment extends Fragment {
     private ImageView ivWeather;
     private boolean temperatureSensorIsPresent;
     private boolean humiditySensorIsPresent;
+    private boolean sendSmsButtonIsPresent;
     private SensorManager sensorManager;
     private Sensor sensorTemperature;
     private Sensor sensorHumidity;
     private int currentCityId;
 
-    public static ForecastFragment newInstance(int cityId, CurrentWeather currentWeather) {
+    public static ForecastFragment newInstance(int cityId, CurrentWeather currentWeather, boolean statusOfSendSmsButton) {
         ForecastFragment fragment = new ForecastFragment();
         Bundle arguments = new Bundle();
         arguments.putParcelable(FORECAST, currentWeather);
         arguments.putInt(CITY_ID, cityId);
+        arguments.putBoolean(SMS_BUTTON_STATUS, statusOfSendSmsButton);
         fragment.setArguments(arguments);
         return fragment;
     }
@@ -72,6 +74,7 @@ public class ForecastFragment extends Fragment {
         if (getArguments() != null && getArguments().containsKey(FORECAST)) {
             currentWeather = getArguments().getParcelable(FORECAST);
             currentCityId = getArguments().getInt(CITY_ID);
+            sendSmsButtonIsPresent = getArguments().getBoolean(SMS_BUTTON_STATUS);
         }
         settings = Model.getInstance().loadCommonSharedPreferences();
     }
@@ -110,12 +113,18 @@ public class ForecastFragment extends Fragment {
 //        currentCityId = currentWeather.getCity().getId();
         updateForecastData(currentWeather);
 
-        // Кнопка "История" и слушатель
+        // Кнопки и слушатель для них
+        BtClickListener btClickListener = new BtClickListener();
         btHistory = view.findViewById(R.id.btHistory);
-        btHistory.setOnClickListener(new btClickListener());
+        btHistory.setOnClickListener(btClickListener);
+        btSendSms = view.findViewById(R.id.btSmsSend);
+        btSendSms.setOnClickListener(btClickListener);
+
 
         // В зависимости от наличия сенсоров, показываю температуру и влажность на приборе
         checkSensors();
+
+        // Проверяю видимость элементов
         if (temperatureSensorIsPresent) {
         } else {
             tvDeviceTemperature.setVisibility(View.GONE);
@@ -128,6 +137,7 @@ public class ForecastFragment extends Fragment {
             tvDeviceHumidity.setVisibility(View.GONE);
             tvDeviceHumidityLabel.setVisibility(View.GONE);
         }
+        btSendSms.setEnabled(sendSmsButtonIsPresent);
 
         return view;
     }
@@ -155,11 +165,18 @@ public class ForecastFragment extends Fragment {
     }
 
 
-    private class btClickListener implements View.OnClickListener {
+    private class BtClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            if (view.getId() == R.id.btHistory) {
-                forecastFragmentListener.onForecastButtonClick(view.getId(), currentWeather.getCity().getId());
+            switch (view.getId()) {
+                case R.id.btHistory:
+                    forecastFragmentListener.onFragmentForecastHistoryButtonClick(currentWeather.getCity().getId());
+                    break;
+                case R.id.btSmsSend:
+                    forecastFragmentListener.onFragmentForecastSendSmsButtonClick(currentWeather);
+                    break;
+                default:
+
             }
         }
     }
@@ -185,7 +202,8 @@ public class ForecastFragment extends Fragment {
     }
 
     public interface OnForecastFragmentInteractionListener {
-        void onForecastButtonClick(int buttonId, int cityId);
+        void onFragmentForecastHistoryButtonClick(int cityId);
+        void onFragmentForecastSendSmsButtonClick(CurrentWeather weather);
     }
 
     // Слушатель датчика температуры
@@ -212,9 +230,9 @@ public class ForecastFragment extends Fragment {
         }
     };
 
-    public void updateForecastData(CurrentWeather currentWeather) {
+    public void updateForecastData(CurrentWeather updatedWeather) {
         // Если показываемый сейчас город совпадает с тем, что пришёл в прогнозе -- обновить его на экране и сохранить его в БД
-
+        this.currentWeather = updatedWeather;
         if (cityOnScreenIsTheSame(currentWeather)) {
 
             String url = "http://openweathermap.org/img/w/" + currentWeather.getIcon() + ".png";

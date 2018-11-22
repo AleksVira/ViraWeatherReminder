@@ -18,6 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     // название таблицы
+    public static final String INDEX_NAME = "weatherhistoryindex";
     public static final String TABLE_NAME = "weatherhistory";
     // столбцы
     public static final String COLUMN_ID = BaseColumns._ID;
@@ -42,6 +43,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_CITY_ID + " TEXT," + COLUMN_CITY_NAME + " TEXT," + COLUMN_DATE + " TEXT,"
                 + COLUMN_TEMPERATURE + " INTEGER," + COLUMN_WIND_SPEED + " INTEGER,"
                 + COLUMN_PRESSURE + " REAL);");
+
+        // Команда для создания индекса у таблицы
+        db.execSQL("CREATE INDEX " + INDEX_NAME + " ON " + TABLE_NAME + " (" + COLUMN_CITY_ID + " ASC);");
+
     }
 
     // вызывается, когда необходимо обновление базы данных

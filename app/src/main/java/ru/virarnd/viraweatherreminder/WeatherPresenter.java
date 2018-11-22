@@ -20,11 +20,14 @@ import ru.virarnd.viraweatherreminder.common.ForecastHistory;
 import ru.virarnd.viraweatherreminder.common.MyApp;
 import ru.virarnd.viraweatherreminder.common.Notification;
 import ru.virarnd.viraweatherreminder.common.Settings;
+import ru.virarnd.viraweatherreminder.sms.SmsSendReceiver;
+import ru.virarnd.viraweatherreminder.sms.SmsSender;
 
 import static android.content.Context.MODE_PRIVATE;
 import static ru.virarnd.viraweatherreminder.Model.SHARED_PREFERENCES_SETTINGS;
 import static ru.virarnd.viraweatherreminder.common.AskOpenWeatherService.CURRENT_FORECAST;
 import static ru.virarnd.viraweatherreminder.common.AskOpenWeatherService.INTENT_RESULT;
+import static ru.virarnd.viraweatherreminder.sms.SmsSender.SMS_SENT;
 
 class WeatherPresenter {
 
@@ -59,6 +62,11 @@ class WeatherPresenter {
 
     private LocalBroadcastManager localBroadcastManager;
     private BroadcastReceiver broadcastReceiver;
+    private BroadcastReceiver sendSmsBroadcastReceiver;
+
+    private boolean statusOfSendSmsButton = false;
+
+
 
     private WeatherPresenter() {
     }
@@ -82,7 +90,7 @@ class WeatherPresenter {
     void setCityAndShowDetail(int cityId) {
         if (cityId != 0) {
             CurrentWeather cityCurrentWeather = model.getForecastByCityId(cityId);
-            firstActivity.showForecast(cityId, cityCurrentWeather);
+            firstActivity.showForecast(cityId, cityCurrentWeather, getStatusOfSendSmsButton());
         }
     }
 
@@ -104,11 +112,13 @@ class WeatherPresenter {
             }
         };
         localBroadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(INTENT_RESULT));
-
+        sendSmsBroadcastReceiver = new SmsSendReceiver();
+        firstActivity.registerReceiver(sendSmsBroadcastReceiver, new IntentFilter(SMS_SENT));
     }
 
     void detachMainView() {
         localBroadcastManager.unregisterReceiver(broadcastReceiver);
+        firstActivity.unregisterReceiver(sendSmsBroadcastReceiver);
         if (firstActivity != null) {
             firstActivity = null;
         }
@@ -201,10 +211,8 @@ class WeatherPresenter {
     }
 
 
-    void sendButtonPressedAndCityId(int buttonId, int cityId) {
-        if (buttonId == R.id.btHistory) {
-            firstActivity.showHistoryForecast(cityId);
-        }
+    void sendButtonPressedAndCityId(int cityId) {
+        firstActivity.showHistoryForecast(cityId);
     }
 
     ForecastHistory getForecastHistoryByCityId(int cityId) {
@@ -245,4 +253,16 @@ class WeatherPresenter {
         return model.loadCommonSharedPreferences();
     }
 
+    public void sendCurrentWeatherBySms(String phoneNumber, CurrentWeather weather) {
+        SmsSender sender = new SmsSender();
+        sender.sendMySms(phoneNumber, "В городе " + weather.getCity().getName() + " t = " + weather.getNowTemp());
+    }
+
+    public boolean getStatusOfSendSmsButton() {
+        return statusOfSendSmsButton;
+    }
+
+    public void setStatusOfSendSmsButton(boolean statusOfSendSmsButton) {
+        this.statusOfSendSmsButton = statusOfSendSmsButton;
+    }
 }

@@ -1,7 +1,11 @@
 package ru.virarnd.viraweatherreminder;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -26,8 +31,10 @@ import ru.virarnd.viraweatherreminder.common.CurrentWeather;
 import ru.virarnd.viraweatherreminder.common.ForecastHistory;
 import ru.virarnd.viraweatherreminder.common.MyApp;
 import ru.virarnd.viraweatherreminder.common.Notification;
+import ru.virarnd.viraweatherreminder.sms.SmsSendReceiver;
 
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+import static ru.virarnd.viraweatherreminder.sms.SmsSender.SMS_SENT;
 
 public class FirstActivity extends AppCompatActivity implements CityListFragment.OnCityListFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener,
         NotificationsFragment.OnListFragmentInteractionListener,
@@ -41,15 +48,15 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
 
     private final static String TAG = FirstActivity.class.getName();
     public final static String PARCEL = "RM46";
-    public final static String FORECAST = "XN7A";
-    public final static String CITY_ID = "LDE0S";
+    public final int SMS_READ_PERMISSION_REQUEST = 101;
+    public final int SMS_RECEIVE_PERMISSION_REQUEST = 111;
+    public final int SMS_SEND_PERMISSION_REQUEST = 121;
 
     private CityListFragment cityListFragment;
     private NotificationsFragment notificationsFragment;
 
     private CreateNewNotificationFragment createNewNotificationFragment;
     private WeatherPresenter weatherPresenter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +95,68 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.add(R.id.mainFrame, cityListFragment);
             transaction.commit();
+        }
+
+        checkPermissionForSms();
+
+    }
+
+    private void checkPermissionForSms() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "Permission for reading SMS is not granted");
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS}, SMS_READ_PERMISSION_REQUEST);
+        } else {
+            Log.d(TAG, "Permission for reading is granted");
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "Permission for receive SMS is not granted");
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECEIVE_SMS}, SMS_RECEIVE_PERMISSION_REQUEST);
+        } else {
+            Log.d(TAG, "Permission for receive is granted");
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "Permission for sending is not granted");
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, SMS_SEND_PERMISSION_REQUEST);
+            weatherPresenter.setStatusOfSendSmsButton(false);
+        } else {
+            weatherPresenter.setStatusOfSendSmsButton(true);
+            Log.d(TAG, "Permission for sending is granted");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case SMS_READ_PERMISSION_REQUEST:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Permission for reading SMS has been granted");
+                    Toast.makeText(MyApp.getContext(), "Wow, you can read SMS!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.d(TAG, "Permission for reading SMS has been denied or request cancelled");
+                    Toast.makeText(MyApp.getContext(), "You can not read SMS!", Toast.LENGTH_LONG).show();
+                }
+                break;
+            case SMS_RECEIVE_PERMISSION_REQUEST:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Permission for receive SMS has been granted");
+                    Toast.makeText(MyApp.getContext(), "Wow, you can receive SMS!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.d(TAG, "Permission for receiving SMS has been denied or request cancelled");
+                    Toast.makeText(MyApp.getContext(), "You can not receive SMS!", Toast.LENGTH_LONG).show();
+                }
+                break;
+            case SMS_SEND_PERMISSION_REQUEST:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Permission for sending SMS has been granted");
+                    Toast.makeText(MyApp.getContext(), "Wow, you can send SMS!", Toast.LENGTH_SHORT).show();
+                    weatherPresenter.setStatusOfSendSmsButton(true);
+                } else {
+                    Log.d(TAG, "Permission for sending SMS has been denied or request cancelled");
+                    Toast.makeText(MyApp.getContext(), "You can not send SMS!", Toast.LENGTH_LONG).show();
+                    weatherPresenter.setStatusOfSendSmsButton(false);
+                }
+                break;
+            default:
         }
     }
 
@@ -137,8 +206,14 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     }
 
     @Override
-    public void onForecastButtonClick(int buttonId, int cityId) {
-        weatherPresenter.sendButtonPressedAndCityId(buttonId, cityId);
+    public void onFragmentForecastHistoryButtonClick(int cityId) {
+        weatherPresenter.sendButtonPressedAndCityId(cityId);
+    }
+
+    @Override
+    public void onFragmentForecastSendSmsButtonClick(CurrentWeather weather) {
+        // Отправляю сам себе погоду через СМС
+        weatherPresenter.sendCurrentWeatherBySms("+79281866472", weather);
     }
 
     @Override
@@ -147,8 +222,8 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     }
 
 
-    public void showForecast(int cityId, CurrentWeather cityCurrentWeather) {
-        ForecastFragment forecastFragment = ForecastFragment.newInstance(cityId, cityCurrentWeather);
+    public void showForecast(int cityId, CurrentWeather cityCurrentWeather, boolean statusOfSendSmsButton) {
+        ForecastFragment forecastFragment = ForecastFragment.newInstance(cityId, cityCurrentWeather, statusOfSendSmsButton);
         if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
             getSupportFragmentManager().beginTransaction().replace(R.id.childFrame, forecastFragment, ForecastFragment.TAG).commit();
         } else {
@@ -282,7 +357,8 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
     public void closeCreationFragment() {
         // Закрываю фрагмент "Создать новое уведомление" и обновляю список уведомлений.
         notificationsFragment.getMyNotificationsRecyclerViewAdapter().notifyDataSetChanged();
-        getSupportFragmentManager().popBackStack();;
+        getSupportFragmentManager().popBackStack();
+        ;
     }
 
     @Override
@@ -317,4 +393,6 @@ public class FirstActivity extends AppCompatActivity implements CityListFragment
             }
         }
     }
+
+
 }
